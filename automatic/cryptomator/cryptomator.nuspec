@@ -46,5 +46,8 @@ For more information on the security details visit [cryptomator.org](https://cry
     <packageSourceUrl>https://github.com/scowalt/chocolatey-packages/tree/master/automatic/cryptomator</packageSourceUrl>
     <docsUrl>https://github.com/cryptomator/cryptomator/wiki</docsUrl>
     <bugTrackerUrl>https://github.com/cryptomator/cryptomator/issues</bugTrackerUrl>
+    <dependencies>
+      <dependency id="chocolatey-core.extension" version="1.3.1" />
+    </dependencies>
   </metadata>
 </package>
