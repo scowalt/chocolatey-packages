@@ -1,17 +1,16 @@
-$ErrorActionPreference = 'Stop';
+﻿$ErrorActionPreference = 'Stop';
 
-$packageName   = 'Depressurizer'
+$packageName   = 'depressurizer'
 $unzipLocation = Join-Path "C:" $packageName
-$url           = "https://github.com/Theo47/depressurizer/releases/download/v$env:chocolateyPackageVersion/depressurizer-$env:chocolateyPackageVersion.zip"
 
 $packageArgs = @{
-  packageName   = $packageName
+  packageName   = '$packageName'
   unzipLocation = $unzipLocation
-  url           = $url
+  url           = 'https://github.com/Depressurizer/Depressurizer/releases/download/v0.7.4.1/depressurizer-0.7.4.1.zip'
 
   softwareName  = 'Depressurizer*'
 
-  checksum      = '769EC7FF1EBDDFD6FDE323D7876E0A42763675FD48E53558303F9E2DF32D425E'
+  checksum      = '34be10c07c1dc0377869cf419e168ae67c5f0789d91809ba411ce8c247985b83'
   checksumType  = 'sha256'
 }
 
