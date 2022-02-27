@@ -26,10 +26,12 @@ jobs:
         run: |
           echo "${{steps.current-version.outputs.version}}"
           echo "${{steps.latest-release.outputs.result}}"
-      - uses: actions/setup-node@v2
-      - run: npm install -g semver-compare-cli
-      - run: |
-          semver-compare "${{steps.current-version.outputs.version}}" "${{steps.latest-release.outputs.result}}" || if [[ $? -eq 2 ]] then echo "Two" else echo "One or zero" fi
+      - id: has-newer-version
+        run: |
+          echo ::set-output name=hasNewerVersion::$(./scripts/has_newer_version.py "${{steps.current-version.outputs.version}}" "${{steps.latest-release.outputs.result}}")
+      - name: To be removed
+        run: |
+          echo "${{steps.has-newer-version.outputs.hasNewerVersion}}"
 
   cryptomator-update:
     runs-on: windows-latest
