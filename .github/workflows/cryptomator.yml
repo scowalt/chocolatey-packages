@@ -8,10 +8,21 @@ jobs:
   cryptomator-check:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      - name: Get current cryptomator version
+        id: current-version
+        run: |
+          echo ::set-output name=version::$(cat packages/cryptomator/cryptomator.nuspec | grep "<version>.*</version>" | awk '{$1=$1};1' | sed "s/<version>//;s/<\/version>//")
       - uses: actions/github-script@v6
         id: set-result
         with:
           script: return "Hello!"
           result-encoding: string
       - name: Get result
-        run: echo "${{steps.set-result.outputs.result}}"
+        run: echo "${{steps.current-version.outputs.version}}"
+
+  cryptomator-update:
+    runs-on: windows-latest
+    steps:
+      - name: Hello world
+        run: echo "Hello world"
