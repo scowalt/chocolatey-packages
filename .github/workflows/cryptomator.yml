@@ -12,14 +12,24 @@ jobs:
       - name: Get current cryptomator version
         id: current-version
         run: |
-          echo ::set-output name=version::$(cat packages/cryptomator/cryptomator.nuspec | grep "<version>.*</version>" | awk '{$1=$1};1' | sed "s/<version>//;s/<\/version>//")
+          echo ::set-output name=version::$(./scripts/get_nuspec_verison.py ./packages/cryptomator/cryptomator.nuspec)
       - uses: actions/github-script@v6
-        id: set-result
+        id: latest-release
         with:
-          script: return "Hello!"
+          script: |
+            return (await github.rest.repos.getLatestRelease({
+              owner: "cryptomator",
+              repo: "cryptomator",
+            })).data.tag_name;
           result-encoding: string
       - name: Get result
-        run: echo "${{steps.current-version.outputs.version}}"
+        run: |
+          echo "${{steps.current-version.outputs.version}}"
+          echo "${{steps.latest-release.outputs.result}}"
+      - uses: actions/setup-node@v2
+      - run: npm install -g semver-compare-cli
+      - run: |
+          semver-compare "${{steps.current-version.outputs.version}}" "${{steps.latest-release.outputs.result}}" || if [[ $? -eq 2 ]] then echo "Two" else echo "One or zero" fi
 
   cryptomator-update:
     runs-on: windows-latest
