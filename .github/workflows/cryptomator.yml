@@ -8,8 +8,8 @@ jobs:
   cryptomator-check:
     runs-on: ubuntu-latest
     outputs:
-      versionNumber: steps.latest-release.outputs.result
-      hasNewerVersion: steps.has-newer-version.outputs.hasNewerVersion
+      versionNumber: ${{ steps.latest-release.outputs.result }}
+      hasNewerVersion: ${{ steps.has-newer-version.outputs.hasNewerVersion }}
     steps:
       - uses: actions/checkout@v2
       - name: Get current cryptomator version
