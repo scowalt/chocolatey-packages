@@ -7,6 +7,9 @@ on:
 jobs:
   cryptomator-check:
     runs-on: ubuntu-latest
+    outputs:
+      versionNumber: steps.latest-release.outputs.result
+      hasNewerVersion: steps.has-newer-version.outputs.hasNewerVersion
     steps:
       - uses: actions/checkout@v2
       - name: Get current cryptomator version
@@ -17,21 +20,22 @@ jobs:
         id: latest-release
         with:
           script: |
-            return (await github.rest.repos.getLatestRelease({
-              owner: "cryptomator",
-              repo: "cryptomator",
-            })).data.tag_name;
+            const scripts = require('./scripts/cryptomator-release.js');
+            return await scripts.latestRelease({github, context});
           result-encoding: string
-      - name: Get result
-        run: |
-          echo "${{steps.current-version.outputs.version}}"
-          echo "${{steps.latest-release.outputs.result}}"
-      - id: has-newer-version
+      - name: Compare versions
+        id: has-newer-version
         run: |
           echo ::set-output name=hasNewerVersion::$(./scripts/has_newer_version.py "${{steps.current-version.outputs.version}}" "${{steps.latest-release.outputs.result}}")
-      - name: To be removed
-        run: |
-          echo "${{steps.has-newer-version.outputs.hasNewerVersion}}"
+      - name: Get download url (failure means no .msi file)
+        id: download-url
+        if: ${{ steps.has-newer-version.outputs.hasNewerVersion == 'true' }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const scripts = require('./scripts/cryptomator-release.js');
+            return await scripts.latestReleaseUrl({github, context});
+          result-encoding: string
 
   cryptomator-update:
     runs-on: windows-latest
