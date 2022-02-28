@@ -8,8 +8,10 @@ jobs:
   cryptomator-check:
     runs-on: ubuntu-latest
     outputs:
-      versionNumber: ${{ steps.latest-release.outputs.result }}
+      newVersionNumber: ${{ steps.latest-release.outputs.result }}
+      oldVersionNumber: ${{ steps.current-version.outputs.version }}
       hasNewerVersion: ${{ steps.has-newer-version.outputs.hasNewerVersion }}
+      exeSha: ${{ steps.generate-sha.outputs.exeSha }}
     steps:
       - uses: actions/checkout@v2
       - name: Get current cryptomator version
@@ -36,6 +38,12 @@ jobs:
             const scripts = require('./scripts/cryptomator-release.js');
             return await scripts.latestReleaseUrl({github, context});
           result-encoding: string
+      - name: Generate a sha256 checksum for the download
+        id: generate-sha
+        if: ${{ steps.has-newer-version.outputs.hasNewerVersion == 'true' }}
+        run: |
+          wget -O new.exe ${{ steps.download-url.outputs.result }}
+          echo "::set-output name=exeSha::$(sha256sum new.exe | awk '{ print $1}')"
 
   cryptomator-update:
     runs-on: windows-latest
