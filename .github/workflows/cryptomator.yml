@@ -53,4 +53,4 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Hello world
-        run: echo "Hello world"
+        run: echo "I'll finish this when there's a new cryptomator version"
