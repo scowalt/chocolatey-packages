@@ -21,7 +21,7 @@ jobs:
       - name: Get current cryptomator version
         id: current-version
         run: |
-          echo ::set-output name=version::$(./scripts/get_nuspec_verison.py ./packages/cryptomator/cryptomator.nuspec)
+          echo ::set-output name=version::$(python ./scripts/get_nuspec_verison.py ./packages/cryptomator/cryptomator.nuspec)
       - uses: actions/github-script@v6
         id: latest-release
         with:
@@ -32,8 +32,8 @@ jobs:
       - name: Compare versions
         id: has-newer-version
         run: |
-          echo ::set-output name=hasNewerVersion::$(./scripts/has_newer_version.py "${{steps.current-version.outputs.version}}" "${{steps.latest-release.outputs.result}}")
-      - name: Get download url (failure means no .msi file)
+          echo ::set-output name=hasNewerVersion::$(python ./scripts/has_newer_version.py "${{steps.current-version.outputs.version}}" "${{steps.latest-release.outputs.result}}")
+      - name: Get download url (failure means no .msi file in release)
         id: download-url
         if: ${{ steps.has-newer-version.outputs.hasNewerVersion == 'true' }}
         uses: actions/github-script@v6
