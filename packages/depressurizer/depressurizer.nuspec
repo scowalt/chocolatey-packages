@@ -17,7 +17,7 @@
     <bugTrackerUrl>https://github.com/Depressurizer/Depressurizer/issues</bugTrackerUrl>
     <tags>depressurizer admin steam</tags>
     <summary>Depressurizer is a program aimed at making it a bit easier to manage large Steam game libraries. It supports manual entry of games from other platforms, so you can categorize, filter and launch all of your (Steam, Origin, uPlay, GOG, etc) games from one location.</summary>
-    <description>Depressurizer is a program aimed at making it a bit easier to manage large Steam game libraries. It can auto-categorize your games for you. Currently, it does so based on data from that games' Steam store pages. It can use genres, Steam flags (like "Single-Player" and "Steam Cloud"), Steam tags, Developer & Publisher info, How Long to Beat times, year, and/or Steam review user scores. Auto-categorizing can be done manually or automatically via shortcut.
+    <description>Depressurizer is a program aimed at making it a bit easier to manage large Steam game libraries. It can auto-categorize your games for you. Currently, it does so based on data from that games' Steam store pages. It can use genres, Steam flags (like "Single-Player" and "Steam Cloud"), Steam tags, Developer and Publisher info, How Long to Beat times, year, and/or Steam review user scores. Auto-categorizing can be done manually or automatically via shortcut.
 
 In addition to providing a way to quickly and easily modify games' assigned categories, it also lets you mark them as Favorites or as Hidden.
 

@@ -11,7 +11,7 @@ if __name__ == '__main__':
     filename = os.path.abspath(args.file)
     tree = ET.parse(filename)
     root = tree.getroot()
-    metadata = root.find("{http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd}metadata")
-    versionElement = metadata.find("{http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd}version")
+    metadata = root.find("{http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd}metadata")
+    versionElement = metadata.find("{http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd}version")
 
     print(versionElement.text)
