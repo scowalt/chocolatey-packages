@@ -6,7 +6,7 @@ $packageArgs = @{
   packageName   = $packageName
   unzipLocation = $toolsDir
   fileType      = 'exe'
-  url           = 'https://github.com/Depressurizer/Depressurizer/releases/download/$env:chocolateyPackageVersion/Depressurizer-$env:chocolateyPackageVersion.zip'
+  url           = 'https://github.com/Depressurizer/Depressurizer/releases/download/$env:chocolateyPackageVersion/Depressurizer-v$env:chocolateyPackageVersion.zip'
 
   softwareName  = 'Depressurizer*'
 
