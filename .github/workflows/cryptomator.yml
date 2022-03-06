@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: '5 4 * * *'
 
+permissions:
+  # Required for add-and-commit
+  contents: write
+
 jobs:
   cryptomator-check:
     runs-on: ubuntu-latest
