@@ -33,3 +33,7 @@ if ($key.Count -eq 1) {
   Write-Warning "Please alert package maintainer the following keys were matched:"
   $key | % {Write-Warning "- $_.DisplayName"}
 }
+
+
+# Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\EarTrumpet.lnk" -ErrorAction Continue
+# Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "EarTrumpet"
