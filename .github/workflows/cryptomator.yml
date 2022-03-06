@@ -1,4 +1,4 @@
-name: Update packages
+name: Cryptomator
 on:
   workflow_dispatch:
   schedule:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  cryptomator-check:
+  version-check:
     runs-on: ubuntu-latest
     outputs:
       newVersionNumber: ${{ steps.latest-release.outputs.result }}
@@ -27,7 +27,7 @@ jobs:
         with:
           script: |
             const scripts = require('./scripts/cryptomator-release.js');
-            return await scripts.latestRelease({github, context});
+            return await scripts.latestRelease({github, context}, 'cryptomator', 'cryptomator');
           result-encoding: string
       - name: Compare versions
         id: has-newer-version
@@ -40,7 +40,7 @@ jobs:
         with:
           script: |
             const scripts = require('./scripts/cryptomator-release.js');
-            return await scripts.latestReleaseUrl({github, context});
+            return await scripts.latestReleaseUrl({github, context}, 'cryptomator', 'cryptomator');
           result-encoding: string
       - name: Generate a sha256 checksum for the download
         id: generate-sha

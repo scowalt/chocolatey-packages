@@ -1,17 +1,17 @@
 module.exports = {
-    latestRelease: async ({ github, context }) => {
+    latestRelease: async ({ github, context }, owner, repo) => {
         const release = await github.rest.repos.getLatestRelease({
-            owner: "cryptomator",
-            repo: "cryptomator",
+            owner,
+            repo,
         });
 
         return release.data.tag_name;
     },
 
-    latestReleaseUrl: async({github, context}) => {
+    latestReleaseUrl: async({github, context}, owner, repo) => {
         const release = await github.rest.repos.getLatestRelease({
-            owner: "cryptomator",
-            repo: "cryptomator",
+            owner,
+            repo,
         });
 
         const asset = release.data.assets.filter((asset) => {
