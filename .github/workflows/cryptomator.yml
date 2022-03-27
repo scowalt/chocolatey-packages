@@ -51,6 +51,22 @@ jobs:
 
   cryptomator-update:
     runs-on: windows-latest
+    needs:
+      - cryptomator-version-check
+    if: ${{ needs.cryptomator-version-check.outputs.hasNewerVersion == 'true' }}
     steps:
-      - name: Hello world
-        run: echo "I'll finish this when there's a new cryptomator version"
+      - uses: actions/checkout@v2
+      - name: Update files
+        run: .\packages\cryptomator\scripts\update_version.ps1 ${{ needs.cryptomator-version-check.outputs.oldVersionNumber }} ${{ needs.cryptomator-version-check.outputs.newVersionNumber }} ${{ needs.cryptomator-version-check.outputs.exeSha }}
+        shell: pwsh
+      - name: Pack
+        shell: pwsh
+        run: cd packages/cryptomator; choco pack
+      - name: Push
+        shell: pwsh
+        run: cd packages/cryptomator; choco push --api-key ${{ secrets.CHOCOLATEY_API_KEY }}
+      - name: Commit changes back to the repository
+        uses: EndBug/add-and-commit@v8
+        with:
+          branch: master
+          message: Cryptomator ${{ needs.github-check.outputs.newVersionNumber }}
