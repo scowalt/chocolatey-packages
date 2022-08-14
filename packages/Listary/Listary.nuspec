@@ -7,8 +7,6 @@
     <authors>Zhenheng Dai</authors>
     <owners>Ishan, scowalt</owners>
     <description>Listary is a unique search utility for Windows. Not only does it make file browsing truly flexible -- thanks to its multi-file managers support -- but the ultra-compact UI also redefines minimalism. The lightweight design doesn't stop it from providing various advanced features however, that may fit the needs of both casual and power users alike. All you have to do is just type the file name that you’re looking for, and Listary will display the search results at breakneck speed.</description>
-    <releaseNotes> * Fixed: Some rare crashes on recent Windows 10 updates.
-    </releaseNotes>
     <summary>Keep files at your fingertips. Listary is a unique search utility for Windows.</summary>
     <language>en-us</language>
     <projectUrl>http://www.listary.com</projectUrl>
@@ -18,5 +16,6 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>listary search find filemanager admin</tags>
     <packageSourceUrl>https://github.com/scowalt/chocolatey-packages</packageSourceUrl>
+    <releaseNotes>https://www.listary.com/download</releaseNotes>
   </metadata>
 </package>
