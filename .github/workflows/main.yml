@@ -21,7 +21,7 @@ jobs:
         env:
           CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
       - name: Update depressurizer
-        run: yarn ts-node scripts/depressuizer-release.ts --upload
+        run: yarn ts-node scripts/depressurizer-release.ts --upload
         env:
           CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
       - name: Commit changes back to the repository
