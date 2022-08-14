@@ -31,7 +31,7 @@ async function main(): Promise<void> {
     const downloadUrl = getDownloadUrl(latestRelease);
     const sha256 = await getSha256(downloadUrl);
     console.log("SHA256:", sha256);
-    updatePackage(downloadUrl, sha256, latestVersion);
+    updatePackage(downloadUrl, sha256, latestVersion, current);
     await createNupkgAndUpload(packageFolder, options.upload);
   } else {
     console.log("No update available");
@@ -41,7 +41,8 @@ async function main(): Promise<void> {
 function updatePackage(
   downloadUrl: string,
   sha: string,
-  version: string
+  version: string,
+  oldVersion: string
 ): void {
   let installPwsh = fs.readFileSync(installPwshPath, "utf8");
   installPwsh = installPwsh.replace(/\$url \= .*/, `$url = "${downloadUrl}"`);
@@ -54,6 +55,7 @@ function updatePackage(
     /<version>.*<\/version>/,
     `<version>${version}</version>`
   );
+  nuspec = nuspec.replace(`v${oldVersion}`, `v${version}`);
   fs.writeFileSync(nuspecPath, nuspec);
   console.log("Updated nuspec");
 }
