@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Listary</id>
-    <version>5.00.2843</version>
+    <version>6.0.9.25</version>
     <title>Listary</title>
     <authors>Zhenheng Dai</authors>
     <owners>Ishan, scowalt</owners>
