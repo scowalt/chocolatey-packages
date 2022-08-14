@@ -16,5 +16,6 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>listary search find filemanager admin</tags>
     <packageSourceUrl>https://github.com/scowalt/chocolatey-packages</packageSourceUrl>
+    <releaseNotes>https://www.listary.com/download</releaseNotes>
   </metadata>
 </package>
