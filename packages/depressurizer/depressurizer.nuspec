@@ -3,7 +3,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
     <id>depressurizer</id>
-    <version>5.1.0</version>
+    <version>5.2.0</version>
     <packageSourceUrl>https://github.com/scowalt/chocolatey-packages</packageSourceUrl>
     <owners>scowalt</owners>
 
@@ -22,7 +22,7 @@
 In addition to providing a way to quickly and easily modify games' assigned categories, it also lets you mark them as Favorites or as Hidden.
 
 It also saves your configuration information independently of Steam, providing an automatic backup in the event that Steam loses your configuration.</description>
-    <releaseNotes>https://github.com/Depressurizer/Depressurizer/releases/tag/v5.1.0</releaseNotes>
+    <releaseNotes>https://github.com/Depressurizer/Depressurizer/releases/tag/v5.2.0</releaseNotes>
     <dependencies>
       <dependency id="dotnetfx" version="4.8.0.20190930" />
     </dependencies>
