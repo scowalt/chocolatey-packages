@@ -3,9 +3,7 @@ import path from "path";
 import {
   createNupkgAndUpload,
   getCurrentVersion,
-  getGithubReleaseInfo,
   getSha256,
-  GithubReleaseInfo,
   parseOptions,
 } from "./shared/release";
 import fs from "fs";
