@@ -1,5 +1,5 @@
 $url = "https://www.listary.com/download/Listary.exe"
-$hash = 'e73438a015a4519ebdcbc428f9e12c5b591279e22edf8d78908d1ce0ca815922'
+$hash = 'fb36f42383a56179a3e28da94c0c1b4feffbfcd2f71163c2ef9982394ae3a66e'
 
 Install-ChocolateyPackage `
 	-PackageName  'Listary' `
