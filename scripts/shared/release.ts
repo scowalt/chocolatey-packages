@@ -54,7 +54,11 @@ export function getCurrentVersion(nuspecPath: string): string {
   return currentVersion;
 }
 
-const octokit = new Octokit({});
+const octokit = new Octokit({
+  // Authenticated requests have a higher rate limit.
+  // I was hitting the rate limit in Github Actions on Github's own API 🤦
+  auth: process.env.GITHUB_TOKEN ?? undefined,
+});
 export type GithubReleaseInfo = Awaited<
   ReturnType<typeof octokit.repos.getLatestRelease>
 >;
