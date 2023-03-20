@@ -1,8 +1,8 @@
 ﻿$ErrorActionPreference = 'Stop';
 
 $packageName = 'depressurizer'
-$url = "https://github.com/Depressurizer/Depressurizer/releases/download/v5.2.0/Depressurizer-v5.2.0.exe"
-$checksum = '8254bdeae5cac5bf8b75f4a59f1d42cb4152961eb5170526ce483c03759375c5'
+$url = "https://github.com/Depressurizer/Depressurizer/releases/download/v5.3.0/Depressurizer-v5.3.0.exe"
+$checksum = '1e6ec910eff6fb904a6a24a72387d2e2f8fdf2bc4f5997a554a4457c0252c5bd'
 
 
 $destination = "$env:LOCALAPPDATA\programs\Depressurizer"
