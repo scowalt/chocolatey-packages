@@ -28,9 +28,15 @@ export async function createNupkgAndUpload(
   if (shouldUpload) {
     console.log("Uploading nupkg...");
     assert(process.env.CHOCOLATEY_API_KEY, "Need an API key to upload");
-    execSync(`choco push --api-key ${process.env.CHOCOLATEY_API_KEY}`, {
-      cwd: packageFolder,
-    });
+    try {
+      execSync(`choco push --api-key ${process.env.CHOCOLATEY_API_KEY}`, {
+        cwd: packageFolder,
+      });
+    } catch (e) {
+      console.error(e);
+      console.error("stderr", e.stderr.toString());
+      throw e;
+    }
   }
 }
 
