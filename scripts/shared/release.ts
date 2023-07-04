@@ -30,7 +30,7 @@ export async function createNupkgAndUpload(
     assert(process.env.CHOCOLATEY_API_KEY, "Need an API key to upload");
     try {
       const result = execSync(
-        `choco push --api-key ${process.env.CHOCOLATEY_API_KEY}`,
+        `choco push --source=https://push.chocolatey.org/ --api-key ${process.env.CHOCOLATEY_API_KEY}`,
         {
           cwd: packageFolder,
           stdio: "pipe", // Redirect stdout and stderr to the parent process
