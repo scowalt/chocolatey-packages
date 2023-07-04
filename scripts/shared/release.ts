@@ -39,7 +39,10 @@ export async function createNupkgAndUpload(
       const stdout = result.toString();
       console.log("stdout:", stdout);
     } catch (e: any) {
-      console.error("stderr:", e.stderr?.toString());
+      console.error("❌ Failed to upload nupkg! ❌");
+      console.error("➡️ stdout:", e.stdout?.toString());
+      console.error("➡️ stderr:", e.stderr?.toString());
+      console.error("➡️ error:", e.error?.toString());
       throw e;
     }
   }
