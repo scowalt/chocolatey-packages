@@ -32,9 +32,9 @@ export async function createNupkgAndUpload(
       execSync(`choco push --api-key ${process.env.CHOCOLATEY_API_KEY}`, {
         cwd: packageFolder,
       });
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      console.error("stderr", e.stderr.toString());
+      console.error("stderr", e.stderr?.toString());
       throw e;
     }
   }
