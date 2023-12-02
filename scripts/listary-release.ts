@@ -7,7 +7,7 @@ import {
   parseOptions,
 } from "./shared/release";
 import fs from "fs";
-import cheerio from "cheerio";
+import { load } from "cheerio";
 import fetch from "node-fetch";
 import _ from "lodash";
 
@@ -58,22 +58,21 @@ function updatePackage(
 }
 
 async function getLatestVersion(): Promise<string> {
-  const releaseInfoUrl = "https://www.listary.com/download";
+  const releaseInfoUrl = "https://help.listary.com/changelog";
   const page = await fetch(releaseInfoUrl);
   const html = await page.text();
-  const $ = cheerio.load(html);
+  const $ = load(html);
 
-  // This seems fragile! Could be h3 in the future?
   let result: string | null = null;
-  const h2 = $("h2");
-  _.each(h2, (element) => {
+  const possibleVersion = $("article div h3.anchor").first();
+  _.each(possibleVersion, (element) => {
     _.each(element.children, (child) => {
       let text = (child as any).data as string;
       const match = text.match(/((\d*\.)+(\d)*)/);
       if (match == null) {
-        console.log(`No version in "${text}"`);
+        console.log(`No version in string "${text}"`);
       } else {
-        console.log(`Found version in "${text}"`);
+        console.log(`Found version: ${text}`);
         result = match[1];
       }
 
