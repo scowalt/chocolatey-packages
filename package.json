@@ -5,7 +5,7 @@
   "repository": "https://github.com/scowalt/chocolatey-packages.git",
   "license": "MIT",
   "dependencies": {
-    "@octokit/rest": "^19.0.13",
+    "@octokit/rest": "^20.0.0",
     "cheerio": "^1.0.0-rc.12",
     "commander": "^11.1.0",
     "fast-xml-parser": "^4.2.5",
