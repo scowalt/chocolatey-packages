@@ -20,7 +20,7 @@ const installPwshPath = path.join(
   "chocolateyinstall.ps1"
 );
 
-async function main(): Promise<void> {
+export async function main(): Promise<void> {
   const options = parseOptions();
   const current = getCurrentVersion(nuspecPath);
   const latestRelease = await getGithubReleaseInfo(owner, repo);

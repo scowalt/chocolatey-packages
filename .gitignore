@@ -28,3 +28,6 @@ update_info.xml
 Update-AUPackages.md
 .vscode
 node_modules
+
+# yarn
+yarn-error.log
