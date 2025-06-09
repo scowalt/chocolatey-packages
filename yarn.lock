@@ -462,9 +462,9 @@ strnum@^2.1.0:
   integrity sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw==
 
 ts-essentials@^10.0.0:
-  version "10.0.4"
-  resolved "https://registry.yarnpkg.com/ts-essentials/-/ts-essentials-10.0.4.tgz#db8381c2e44cddb3339a2286174c4763bc1dcedb"
-  integrity sha512-lwYdz28+S4nicm+jFi6V58LaAIpxzhg9rLdgNC1VsdP/xiFBseGhF1M/shwCk6zMmwahBZdXcl34LVHrEang3A==
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/ts-essentials/-/ts-essentials-10.1.0.tgz#99fc602cda49822c083560db871c4d1abb52a332"
+  integrity sha512-LirrVzbhIpFQ9BdGfqLnM9r7aP9rnyfeoxbP5ZEkdr531IaY21+KdebRSsbvqu28VDJtcDDn+AlGn95t0c52zQ==
 
 ts-node@^10.9.1:
   version "10.9.2"
