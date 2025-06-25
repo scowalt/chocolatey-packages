@@ -1,7 +1,7 @@
 ﻿$ErrorActionPreference = 'Stop'
 
-$url64bit = "https://github.com/cryptomator/cryptomator/releases/download/1.15.1/Cryptomator-1.15.1-x64.msi"
-$checksum64 = '8e8af2420d7cd78f22ac11f3be52253d653075c294e603607b9c61a2bf95775e'
+$url64bit = "https://github.com/cryptomator/cryptomator/releases/download/1.17.0/Cryptomator-1.17.0-x64.msi"
+$checksum64 = '3bae9567d445edb930c7f32f5fa2f288cfde459163ab3681c648161a34059295'
 
 $packageArgs = @{
   packageName            = 'cryptomator'
