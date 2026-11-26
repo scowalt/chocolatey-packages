@@ -15,4 +15,7 @@ Install-ChocolateyZipPackage `
   -Checksum $checksum `
   -ChecksumType 'sha256'
 
+Get-ChildItem -Path (Join-Path $toolsDir $packageName) -Filter '*.exe' -Recurse |
+  ForEach-Object { New-Item -ItemType File -Path "$($_.FullName).ignore" -Force | Out-Null }
+
 Install-ChocolateyShortcut -ShortcutFilePath $shortcut -TargetPath $target

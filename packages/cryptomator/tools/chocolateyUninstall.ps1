@@ -4,7 +4,7 @@ $packageName = 'Cryptomator'
 $softwareName = 'Cryptomator*'
 $installerType = 'msi'
 $silentArgs = '/qn /norestart'
-$validExitCodes = @(0)
+$validExitCodes = @(0, 3010, 1641)
 
 [array]$key = Get-UninstallRegistryKey -SoftwareName $softwareName
 

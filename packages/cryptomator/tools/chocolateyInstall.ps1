@@ -10,7 +10,7 @@ $packageArgs = @{
   checksum64             = $checksum
   checksumType64         = 'sha256'
   silentArgs             = '/qn /norestart DISABLEUPDATECHECK=1'
-  validExitCodes         = @(0)
+  validExitCodes         = @(0, 3010, 1641)
   registryUninstallerKey = 'Cryptomator'
 }
 Install-ChocolateyPackage @packageArgs

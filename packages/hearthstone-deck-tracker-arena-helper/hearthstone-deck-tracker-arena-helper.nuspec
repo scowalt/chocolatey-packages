@@ -8,6 +8,8 @@
     <owners>scowalt</owners>
     <summary>Arena Helper is a plugin for Hearthstone Deck Tracker that helps drafting Hearthstone arena decks by showing an overlay with card values from a tier list.</summary>
     <description>Arena Helper is a plugin for Hearthstone Deck Tracker that helps drafting Hearthstone arena decks by showing an overlay with card values from a tier list. The plugin tries to visually detect the arena heroes and card choices. Detected cards are displayed alongside the value of the card, that is specified in The Lightforge: Hearthstone Arena Tier List. The created deck can be saved to Hearthstone Deck Tracker.
+
+The plugin is installed per user, under the installing account's `%APPDATA%`. Install it from the account that runs Hearthstone Deck Tracker. The install fails when choco runs as SYSTEM.
     </description>
     <projectUrl>https://github.com/rembound/Arena-Helper</projectUrl>
     <packageSourceUrl>https://github.com/scowalt/chocolatey-packages/tree/master/packages/hearthstone-deck-tracker-arena-helper</packageSourceUrl>

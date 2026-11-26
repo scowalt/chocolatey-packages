@@ -33,6 +33,8 @@
   - Details for each game (cards drawn, played, etc.).
   - Select which game modes to track (Options > Other).
   - Import your opponent's (partial) deck from a tracked game as a new deck.
+
+Install this package from the account that plays Hearthstone. It creates the desktop shortcut for the installing account only, and you start Hearthstone Deck Tracker from that shortcut.
     </description>
     <projectUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker</projectUrl>
     <packageSourceUrl>https://github.com/scowalt/chocolatey-packages/tree/master/packages/hearthstone-deck-tracker</packageSourceUrl>
