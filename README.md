@@ -34,18 +34,31 @@ The updater rewrites those two lines and the `<version>` in the nuspec. It touch
 
 1. The nuspec version, parsed once into `{ upstream, fixDate? }`. See the fix-version convention below.
 2. Upstream's newest version.
-3. The feed status of the exact nuspec version, and of upstream's version if it differs:
-   `approved`, `submitted`, `rejected` or `absent`.
+3. The feed status of the one version the package will end up at: `approved`, `submitted`,
+   `rejected` or `absent`.
 
-Versions compare as numbers, segment by segment, never as text.
+Versions compare as numbers, segment by segment, never as text. `targetOf` picks that version
+without any request:
 
-- Upstream is newer than the nuspec's upstream part: rewrite the package to upstream's version.
-- They are equal: keep the nuspec, including a fix version.
-- Upstream is older: the state is `ahead`, which is an error. The updater never rewrites downward.
+- Upstream is newer than the nuspec's upstream part: the target is upstream's version, and the
+  package is rewritten to it.
+- They are equal: the target is the nuspec's version, including a fix version. Nothing is rewritten.
+- Upstream is older: the plan is `ahead`, and nothing is looked up or rewritten. The updater never
+  rewrites downward.
 
-After that, the package is published exactly when its resulting version is `absent` from the feed.
-Any other status blocks a push, because pushing a version that waits in moderation replaces the
-submission and can restart moderation.
+Then `plan` maps the feed status of the target onto the decision. The daily path makes exactly one
+feed request per package, for the target version, and none for an `ahead` package. A failing lookup
+for any other version cannot hold a package back. Only `check` also lists a package's versions, for
+its `community` column.
+
+A package is published exactly when its target version is `absent` from the feed. Any other status
+blocks a push, because pushing a version that waits in moderation replaces the submission and can
+restart moderation. A `rejected` target is never rewritten to.
+
+`plan.ts` also holds every reading of a plan, so the commands cannot disagree: `onFeed` (approved or
+in moderation), `standingOf` (the state `check` prints) and `problemOf`. The daily run reports
+`ahead` and `rejected` as a failed outcome for that package. The job goes red, the other packages
+carry on and the heartbeat is skipped. `check` shows them as states.
 
 | Feed status | Chocolatey `PackageStatus` values it covers |
 | --- | --- |
@@ -60,32 +73,43 @@ error too, never `absent`.
 ## The daily workflow
 
 `.github/workflows/update.yml` runs two jobs. Third-party code, meaning each package's installer,
-only ever runs in the first, where no secret and no write token exists.
+only ever runs in the first, which has no repository write token and no secrets.
 
 `prepare` has `contents: read`, no environment and no secrets. It checks out without persisting
-credentials and gives `GITHUB_TOKEN` only to the step that asks GitHub for releases.
+credentials and gives `GITHUB_TOKEN` only to the step that asks GitHub for releases. Its Actions
+runtime token can still write the cache and artifacts, which is why `publish` skips the cache and
+treats the artifact as untrusted.
 
-1. `bun run daily:plan` computes every plan and rewrites the packages that are behind.
-2. `bun run daily:install` packs, installs and uninstalls every package, changed or not, so a dead
-   download shows up the day it dies.
-3. The job uploads `prepare-report.json`: for each package its plan, whether its install test passed,
-   and a SHA-256 over its rewritten package files. It uploads even when some installs failed, and the
-   job fails at the end if any package failed.
+1. `bun run daily:plan` computes every plan and rewrites the packages that are behind. It writes no
+   report.
+2. `bun run daily:install` hashes every package's files, then packs, installs and uninstalls every
+   package, changed or not, so a dead download shows up the day it dies, then writes
+   `prepare-report.json`. The hashes come first, so no installer can change what they cover.
+3. The job uploads the report. It uploads even when some installs failed, and the job fails if the
+   plan or any install failed. The upload overwrites, so re-running a failed `prepare` works.
+
+The report has one entry per package: `{ id, hash, installed }`. That is the package id, a SHA-256
+over its rewritten package files and whether its install test passed. It carries no plan and no
+failure text, so `publish` has nothing to copy or trust beyond those three fields.
 
 `publish` runs after `prepare`, also when `prepare` failed. It runs in the environment `chocolatey`
 with `contents: write`, runs no package script and no installer, and treats the report as untrusted.
 Its Bun setup skips the Actions cache, because jobs that ran installers on `master` can write that
 cache.
 
-1. `bun run daily:publish` re-derives every plan and rewrites the files itself: a download and a hash.
-2. It packs and pushes a package only when the report says its install test passed, its own file hash
-   equals the reported one, its own plan equals the reported one, and the plan says publish.
+1. `bun run daily:publish` applies every plan itself: it plans, then rewrites the files with a
+   download and a hash.
+2. It packs and pushes a package only when its own plan says publish, the report says its install
+   test passed and its own file hash equals the reported one.
 3. A push that Chocolatey answers with 409 means the version is already there, and counts as done.
 4. It commits the rewritten files of every package whose new version is now on the feed, whether it
    was just pushed, answered 409, or was found submitted or approved. It restores the files of every
    other package first, then rebases on `origin/master` and pushes as `github-actions[bot]`.
-5. It fails if any push failed or `prepare` failed. A failing package never blocks the others.
-6. After a fully successful run it sends a heartbeat to `alerts.scowalt.com`. If the heartbeat
+5. It fails only for its own problems: a package it could not plan, a refused push, a failed push or
+   a failed commit. A failing package never blocks the others.
+6. After a run where both jobs succeeded, a step guarded by `needs.prepare.result == 'success'`
+   sends a heartbeat to `alerts.scowalt.com`. That guard is the only place `prepare`'s result is
+   read. If the heartbeat
    stops, the alerts router pages the owner. This also catches GitHub disabling the schedule after
    60 days without repository activity.
 
@@ -101,7 +125,7 @@ bun run check
 
 `check` prints one row per package (the nuspec version, the newest approved version on the
 Chocolatey community feed, upstream's version and a state), then a legend. The legend lives in
-`LEGEND` in `src/survey.ts`, so it cannot drift from the code. `check` exits 1 unless every package
+`LEGEND` in `src/check.ts`, so it cannot drift from the code. `check` exits 1 unless every package
 is `current` or `moderation`.
 
 Set `GITHUB_TOKEN` to avoid GitHub's low rate limit for anonymous requests.
@@ -124,7 +148,8 @@ The updater keeps it until upstream releases a newer version.
 NuGet allows four version segments, so the convention only works for upstream versions of three or
 fewer segments. A nuspec version of four segments whose last has eight digits reads as a fix. A
 nuspec version of more than four segments is an error. Listary's upstream versions have four
-segments, such as `6.3.5.94`, so Listary cannot use the convention.
+segments, such as `6.3.5.94`, so Listary cannot use the convention. Chocolatey has its own notation
+for that case, and the updater does not support it yet. See `AGENTS.md`.
 
 ## Why GitHub Actions
 

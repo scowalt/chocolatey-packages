@@ -69,7 +69,7 @@ jobs:
         with:
           name: prepare-report
           path: ${{ runner.temp }}/prepare-report
-      - name: Re-derive every package, push the ones prepare vouched for and commit them
+      - name: Plan every package again, push the ones prepare vouched for and commit them
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
