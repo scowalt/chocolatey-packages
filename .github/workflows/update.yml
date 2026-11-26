@@ -1,0 +1,86 @@
+name: Update packages
+
+on:
+  schedule:
+    - cron: '5 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-packages
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    environment: chocolatey
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+        with:
+          bun-version: 1.4.4
+      - run: bun install --frozen-lockfile
+      - name: Find new upstream versions and rewrite package files
+        id: update
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          status=0
+          bun run --silent update > changed.txt || status=$?
+          echo "ids=$(tr -d '\r' < changed.txt | paste -sd' ' -)" >> "$GITHUB_OUTPUT"
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+      - name: Install-test and push each changed package
+        id: publish
+        env:
+          IDS: ${{ steps.update.outputs.ids }}
+          CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
+        run: |
+          published=""
+          failed=""
+          for id in $IDS; do
+            if bun run verify "$id" && bun run release "$id"; then
+              published="$published $id"
+            else
+              failed="$failed $id"
+            fi
+          done
+          echo "published=${published# }" >> "$GITHUB_OUTPUT"
+          echo "failed=${failed# }" >> "$GITHUB_OUTPUT"
+      - name: Commit the published versions to master
+        env:
+          PUBLISHED: ${{ steps.publish.outputs.published }}
+        run: |
+          for id in $PUBLISHED; do
+            git add "packages/$id"
+          done
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "chore: publish $PUBLISHED"
+            git pull --rebase origin master
+            git push origin HEAD:master
+          fi
+      - name: Fail when any package could not be updated or published
+        env:
+          UPDATE_STATUS: ${{ steps.update.outputs.status }}
+          FAILED: ${{ steps.publish.outputs.failed }}
+        run: |
+          if [ "$UPDATE_STATUS" != "0" ] || [ -n "$FAILED" ]; then
+            echo "Update status $UPDATE_STATUS, failed to publish: $FAILED"
+            exit 1
+          fi
+      - name: Report the successful run to the alerts router
+        env:
+          ALERTS_TOKEN: ${{ secrets.ALERTS_TOKEN }}
+        run: |
+          curl --fail --silent --show-error --retry 3 -X POST \
+            -H "Authorization: Bearer $ALERTS_TOKEN" \
+            "https://alerts.scowalt.com/heartbeat/chocolatey-packages/daily-update?every=2d"
