@@ -11,13 +11,13 @@ import { failures, forEachPackage, values, type Outcome } from "./runner.ts";
 export type PushGate = { readonly push: true } | { readonly push: false; readonly reason: string };
 
 export function pushGate(
-  derived: { readonly plan: Plan; readonly hash: string },
+  applied: { readonly plan: Plan; readonly hash: string },
   reported: PrepareEntry | undefined,
 ): PushGate {
-  if (derived.plan.kind !== "publish") return { push: false, reason: `nothing to publish (${derived.plan.kind})` };
+  if (applied.plan.kind !== "publish") return { push: false, reason: `nothing to publish (${applied.plan.kind})` };
   if (reported === undefined) return { push: false, reason: "prepare reported nothing for this package" };
   if (!reported.installed) return { push: false, reason: "its install test did not pass" };
-  if (reported.hash !== derived.hash) {
+  if (reported.hash !== applied.hash) {
     return { push: false, reason: "its files differ from the ones prepare tested" };
   }
   return { push: true };

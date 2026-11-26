@@ -17,7 +17,7 @@ The plugin is installed per user, under the installing account's `%APPDATA%`. In
     <tags>hearthstone-deck-tracker-arena-helper hearthstone-deck-tracker hearthstone</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
-      <dependency id="hearthstone-deck-tracker" />
+      <dependency id="hearthstone-deck-tracker" version="1.55.6" />
     </dependencies>
     <releaseNotes>https://github.com/rembound/Arena-Helper/releases</releaseNotes>
   </metadata>
