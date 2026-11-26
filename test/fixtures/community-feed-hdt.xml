@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<feed xml:base="https://community.chocolatey.org/api/v2/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">FindPackagesById</title>
+  <id>https://community.chocolatey.org/api/v2/FindPackagesById</id>
+  <updated>2026-11-26T14:08:47Z</updated>
+  <link rel="self" title="FindPackagesById" href="FindPackagesById" />
+  <entry>
+    <id>https://community.chocolatey.org/api/v2/Packages(Id='hearthstone-deck-tracker',Version='1.1.6')</id>
+    <title type="text">hearthstone-deck-tracker</title>
+    <summary type="text"></summary>
+    <updated>2026-09-13T15:15:26Z</updated>
+    <author>
+      <name>Epix37</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='hearthstone-deck-tracker',Version='1.1.6')/$value" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='hearthstone-deck-tracker',Version='1.1.6')" />
+    <category term="CCR.Website.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <content type="application/zip" src="https://community.chocolatey.org/api/v2/package/hearthstone-deck-tracker/1.1.6" />
+    <m:properties xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
+      <d:Version>1.1.6</d:Version>
+      <d:Title>Hearthstone Deck Tracker</d:Title>
+      <d:Description></d:Description>
+      <d:Tags></d:Tags>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2017-02-13T04:09:19.37</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:DownloadCount m:type="Edm.Int32">3927</d:DownloadCount>
+      <d:VersionDownloadCount m:type="Edm.Int32">2130</d:VersionDownloadCount>
+      <d:GalleryDetailsUrl>https://community.chocolatey.org/packages/hearthstone-deck-tracker/1.1.6</d:GalleryDetailsUrl>
+      <d:ReportAbuseUrl>https://community.chocolatey.org/package/ReportAbuse/hearthstone-deck-tracker/1.1.6</d:ReportAbuseUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/HearthSim/Hearthstone-Deck-Tracker/master/Hearthstone Deck Tracker/Images/HearthstoneDeckTracker.ico</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language></d:Language>
+      <d:Published m:type="Edm.DateTime">2017-02-13T04:09:19.37</d:Published>
+      <d:LicenseUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/tree/master/licenses</d:LicenseUrl>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:PackageHash></d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">6645</d:PackageSize>
+      <d:ProjectUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker</d:ProjectUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:ProjectSourceUrl></d:ProjectSourceUrl>
+      <d:PackageSourceUrl>https://github.com/scowalt/chocolatey-Hearthstone-Deck-Tracker</d:PackageSourceUrl>
+      <d:DocsUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/wiki</d:DocsUrl>
+      <d:MailingListUrl></d:MailingListUrl>
+      <d:BugTrackerUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/issues</d:BugTrackerUrl>
+      <d:IsApproved m:type="Edm.Boolean">true</d:IsApproved>
+      <d:PackageStatus>Approved</d:PackageStatus>
+      <d:PackageSubmittedStatus>Waiting</d:PackageSubmittedStatus>
+      <d:PackageTestResultUrl>https://gist.github.com/choco-bot/69e697b332581be60ae151d673bc6d2a</d:PackageTestResultUrl>
+      <d:PackageTestResultStatus>Passing</d:PackageTestResultStatus>
+      <d:PackageTestResultStatusDate m:type="Edm.DateTime">2026-09-14T16:20:19.6126649Z</d:PackageTestResultStatusDate>
+      <d:PackageValidationResultStatus>Passing</d:PackageValidationResultStatus>
+      <d:PackageValidationResultDate m:type="Edm.DateTime">2017-02-13T04:42:18.357</d:PackageValidationResultDate>
+      <d:PackageCleanupResultDate m:type="Edm.DateTime" m:null="true"></d:PackageCleanupResultDate>
+      <d:PackageReviewedDate m:type="Edm.DateTime">2025-01-11T09:19:05.627</d:PackageReviewedDate>
+      <d:PackageApprovedDate m:type="Edm.DateTime">2017-02-22T18:33:36.64</d:PackageApprovedDate>
+      <d:PackageReviewer>flcdrg</d:PackageReviewer>
+      <d:IsDownloadCacheAvailable m:type="Edm.Boolean">true</d:IsDownloadCacheAvailable>
+      <d:DownloadCacheStatus>Available</d:DownloadCacheStatus>
+      <d:DownloadCacheDate m:type="Edm.DateTime">2017-02-21T07:29:10.557</d:DownloadCacheDate>
+      <d:DownloadCache>https://github.com/HearthSim/Hearthstone-Deck-Tracker/releases/download/v1.1.6/Hearthstone.Deck.Tracker-v1.1.6.zip^x86/Hearthstone.Deck.Tracker-v1.1.6.zip^DFB32825E10F00E32FD46C71601021219F20CAA63EF09451A642CD077D28A52B66CDD982B54CDA62D2CF5F1A710CF96DE3DCC543480A6B109BC57F8266CC3599</d:DownloadCache>
+      <d:PackageScanStatus>NotFlagged</d:PackageScanStatus>
+      <d:PackageScanResultDate m:type="Edm.DateTime">2017-02-22T18:33:36.64</d:PackageScanResultDate>
+      <d:PackageScanFlagResult>Unknown</d:PackageScanFlagResult>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://community.chocolatey.org/api/v2/Packages(Id='hearthstone-deck-tracker',Version='0.15.13')</id>
+    <title type="text">hearthstone-deck-tracker</title>
+    <summary type="text"></summary>
+    <updated>2025-09-20T14:19:49Z</updated>
+    <author>
+      <name>Epix37</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='hearthstone-deck-tracker',Version='0.15.13')/$value" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='hearthstone-deck-tracker',Version='0.15.13')" />
+    <category term="CCR.Website.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <content type="application/zip" src="https://community.chocolatey.org/api/v2/package/hearthstone-deck-tracker/0.15.13" />
+    <m:properties xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
+      <d:Version>0.15.13</d:Version>
+      <d:Title>Hearthstone Deck Tracker</d:Title>
+      <d:Description></d:Description>
+      <d:Tags></d:Tags>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-08-02T16:37:10.653</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:DownloadCount m:type="Edm.Int32">3927</d:DownloadCount>
+      <d:VersionDownloadCount m:type="Edm.Int32">494</d:VersionDownloadCount>
+      <d:GalleryDetailsUrl>https://community.chocolatey.org/packages/hearthstone-deck-tracker/0.15.13</d:GalleryDetailsUrl>
+      <d:ReportAbuseUrl>https://community.chocolatey.org/package/ReportAbuse/hearthstone-deck-tracker/0.15.13</d:ReportAbuseUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/HearthSim/Hearthstone-Deck-Tracker/master/Hearthstone Deck Tracker/Images/HearthstoneDeckTracker.ico</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language></d:Language>
+      <d:Published m:type="Edm.DateTime">2016-08-02T16:37:10.653</d:Published>
+      <d:LicenseUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/tree/master/licenses</d:LicenseUrl>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:PackageHash></d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">6599</d:PackageSize>
+      <d:ProjectUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker</d:ProjectUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:ProjectSourceUrl></d:ProjectSourceUrl>
+      <d:PackageSourceUrl>https://github.com/scowalt/chocolatey-Hearthstone-Deck-Tracker</d:PackageSourceUrl>
+      <d:DocsUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/wiki</d:DocsUrl>
+      <d:MailingListUrl></d:MailingListUrl>
+      <d:BugTrackerUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/issues</d:BugTrackerUrl>
+      <d:IsApproved m:type="Edm.Boolean">true</d:IsApproved>
+      <d:PackageStatus>Approved</d:PackageStatus>
+      <d:PackageSubmittedStatus>Waiting</d:PackageSubmittedStatus>
+      <d:PackageTestResultUrl>https://gist.github.com/7a0301c4d76ab51819cf86c5557f3887</d:PackageTestResultUrl>
+      <d:PackageTestResultStatus>Passing</d:PackageTestResultStatus>
+      <d:PackageTestResultStatusDate m:type="Edm.DateTime">2016-11-08T08:59:03.873</d:PackageTestResultStatusDate>
+      <d:PackageValidationResultStatus>Passing</d:PackageValidationResultStatus>
+      <d:PackageValidationResultDate m:type="Edm.DateTime">2016-08-02T17:17:29.007</d:PackageValidationResultDate>
+      <d:PackageCleanupResultDate m:type="Edm.DateTime" m:null="true"></d:PackageCleanupResultDate>
+      <d:PackageReviewedDate m:type="Edm.DateTime">2016-08-18T12:02:13.45</d:PackageReviewedDate>
+      <d:PackageApprovedDate m:type="Edm.DateTime">2016-08-18T12:02:13.45</d:PackageApprovedDate>
+      <d:PackageReviewer>gep13</d:PackageReviewer>
+      <d:IsDownloadCacheAvailable m:type="Edm.Boolean">true</d:IsDownloadCacheAvailable>
+      <d:DownloadCacheStatus>Available</d:DownloadCacheStatus>
+      <d:DownloadCacheDate m:type="Edm.DateTime">2016-08-18T13:07:59.913</d:DownloadCacheDate>
+      <d:DownloadCache>https://github.com/HearthSim/Hearthstone-Deck-Tracker/releases/download/v0.15.13/Hearthstone.Deck.Tracker-v0.15.13.zip^x86/Hearthstone.Deck.Tracker-v0.15.13.zip^C52D78F09DCF66FE800663E9689150736E4E40F10BEBF688987D10AB59C5AD019673A98F59552EFE463451393DA04BD0F2700C58A9E4560D44F102FB0DA2C00C</d:DownloadCache>
+      <d:PackageScanStatus>NotFlagged</d:PackageScanStatus>
+      <d:PackageScanResultDate m:type="Edm.DateTime">2016-08-02T17:30:28.923</d:PackageScanResultDate>
+      <d:PackageScanFlagResult>Unknown</d:PackageScanFlagResult>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://community.chocolatey.org/api/v2/Packages(Id='hearthstone-deck-tracker',Version='0.14.8')</id>
+    <title type="text">hearthstone-deck-tracker</title>
+    <summary type="text"></summary>
+    <updated>2025-09-20T12:49:53Z</updated>
+    <author>
+      <name>Epix37</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='hearthstone-deck-tracker',Version='0.14.8')/$value" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='hearthstone-deck-tracker',Version='0.14.8')" />
+    <category term="CCR.Website.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <content type="application/zip" src="https://community.chocolatey.org/api/v2/package/hearthstone-deck-tracker/0.14.8" />
+    <m:properties xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
+      <d:Version>0.14.8</d:Version>
+      <d:Title>Hearthstone Deck Tracker</d:Title>
+      <d:Description></d:Description>
+      <d:Tags></d:Tags>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-05-14T21:02:00.243</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:DownloadCount m:type="Edm.Int32">3927</d:DownloadCount>
+      <d:VersionDownloadCount m:type="Edm.Int32">412</d:VersionDownloadCount>
+      <d:GalleryDetailsUrl>https://community.chocolatey.org/packages/hearthstone-deck-tracker/0.14.8</d:GalleryDetailsUrl>
+      <d:ReportAbuseUrl>https://community.chocolatey.org/package/ReportAbuse/hearthstone-deck-tracker/0.14.8</d:ReportAbuseUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/HearthSim/Hearthstone-Deck-Tracker/master/Hearthstone Deck Tracker/Images/HearthstoneDeckTracker.ico</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language></d:Language>
+      <d:Published m:type="Edm.DateTime">2016-05-14T21:02:00.243</d:Published>
+      <d:LicenseUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/tree/master/licenses</d:LicenseUrl>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:PackageHash></d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">6963</d:PackageSize>
+      <d:ProjectUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker</d:ProjectUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:ProjectSourceUrl></d:ProjectSourceUrl>
+      <d:PackageSourceUrl>https://github.com/scowalt/chocolatey-Hearthstone-Deck-Tracker</d:PackageSourceUrl>
+      <d:DocsUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/wiki</d:DocsUrl>
+      <d:MailingListUrl></d:MailingListUrl>
+      <d:BugTrackerUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/issues</d:BugTrackerUrl>
+      <d:IsApproved m:type="Edm.Boolean">true</d:IsApproved>
+      <d:PackageStatus>Approved</d:PackageStatus>
+      <d:PackageSubmittedStatus>Waiting</d:PackageSubmittedStatus>
+      <d:PackageTestResultUrl>https://gist.github.com/7f912a0fda83ea80a57cc2194250d3b4</d:PackageTestResultUrl>
+      <d:PackageTestResultStatus>Passing</d:PackageTestResultStatus>
+      <d:PackageTestResultStatusDate m:type="Edm.DateTime">2016-05-14T21:38:07.24</d:PackageTestResultStatusDate>
+      <d:PackageValidationResultStatus>Passing</d:PackageValidationResultStatus>
+      <d:PackageValidationResultDate m:type="Edm.DateTime">2016-05-14T21:34:05.193</d:PackageValidationResultDate>
+      <d:PackageCleanupResultDate m:type="Edm.DateTime" m:null="true"></d:PackageCleanupResultDate>
+      <d:PackageReviewedDate m:type="Edm.DateTime">2016-05-14T22:43:49.987</d:PackageReviewedDate>
+      <d:PackageApprovedDate m:type="Edm.DateTime">2016-05-14T22:43:49.987</d:PackageApprovedDate>
+      <d:PackageReviewer>ferventcoder</d:PackageReviewer>
+      <d:IsDownloadCacheAvailable m:type="Edm.Boolean">true</d:IsDownloadCacheAvailable>
+      <d:DownloadCacheStatus>Available</d:DownloadCacheStatus>
+      <d:DownloadCacheDate m:type="Edm.DateTime">2016-05-14T23:52:34.307</d:DownloadCacheDate>
+      <d:DownloadCache>https://github.com/HearthSim/Hearthstone-Deck-Tracker/releases/download/v0.14.8/Hearthstone.Deck.Tracker-v0.14.8.zip^x86/Hearthstone.Deck.Tracker-v0.14.8.zip^1EB4EF0F43AF203725DB05F6B3AB01B0EA5BCD08E98C5F63DAB98C3BDA6A56C18AD6479B58AEDD0595B0C671818CED2CB8DB96D7FCDF32B9C16206E61077B16F</d:DownloadCache>
+      <d:PackageScanStatus>NotFlagged</d:PackageScanStatus>
+      <d:PackageScanResultDate m:type="Edm.DateTime">2016-05-14T22:50:38.897</d:PackageScanResultDate>
+      <d:PackageScanFlagResult>Unknown</d:PackageScanFlagResult>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://community.chocolatey.org/api/v2/Packages(Id='hearthstone-deck-tracker',Version='0.14.7')</id>
+    <title type="text">hearthstone-deck-tracker</title>
+    <summary type="text"></summary>
+    <updated>2025-09-20T12:49:53Z</updated>
+    <author>
+      <name>Epix37</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='hearthstone-deck-tracker',Version='0.14.7')/$value" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='hearthstone-deck-tracker',Version='0.14.7')" />
+    <category term="CCR.Website.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <content type="application/zip" src="https://community.chocolatey.org/api/v2/package/hearthstone-deck-tracker/0.14.7" />
+    <m:properties xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
+      <d:Version>0.14.7</d:Version>
+      <d:Title>Hearthstone Deck Tracker</d:Title>
+      <d:Description></d:Description>
+      <d:Tags></d:Tags>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-05-08T22:21:40.05</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:DownloadCount m:type="Edm.Int32">3927</d:DownloadCount>
+      <d:VersionDownloadCount m:type="Edm.Int32">386</d:VersionDownloadCount>
+      <d:GalleryDetailsUrl>https://community.chocolatey.org/packages/hearthstone-deck-tracker/0.14.7</d:GalleryDetailsUrl>
+      <d:ReportAbuseUrl>https://community.chocolatey.org/package/ReportAbuse/hearthstone-deck-tracker/0.14.7</d:ReportAbuseUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/HearthSim/Hearthstone-Deck-Tracker/master/Hearthstone Deck Tracker/Images/HearthstoneDeckTracker.ico</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language></d:Language>
+      <d:Published m:type="Edm.DateTime">2016-05-08T22:21:40.05</d:Published>
+      <d:LicenseUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/tree/master/licenses</d:LicenseUrl>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:PackageHash></d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">6653</d:PackageSize>
+      <d:ProjectUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker</d:ProjectUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:ProjectSourceUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker</d:ProjectSourceUrl>
+      <d:PackageSourceUrl>https://github.com/scowalt/chocolatey-Hearthstone-Deck-Tracker</d:PackageSourceUrl>
+      <d:DocsUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/wiki</d:DocsUrl>
+      <d:MailingListUrl></d:MailingListUrl>
+      <d:BugTrackerUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/issues</d:BugTrackerUrl>
+      <d:IsApproved m:type="Edm.Boolean">true</d:IsApproved>
+      <d:PackageStatus>Approved</d:PackageStatus>
+      <d:PackageSubmittedStatus>Waiting</d:PackageSubmittedStatus>
+      <d:PackageTestResultUrl>https://gist.github.com/7be8e8db087081aa28f1337dc1bfab34</d:PackageTestResultUrl>
+      <d:PackageTestResultStatus>Passing</d:PackageTestResultStatus>
+      <d:PackageTestResultStatusDate m:type="Edm.DateTime">2016-05-08T22:57:35.79</d:PackageTestResultStatusDate>
+      <d:PackageValidationResultStatus>Passing</d:PackageValidationResultStatus>
+      <d:PackageValidationResultDate m:type="Edm.DateTime">2016-05-08T22:54:40.957</d:PackageValidationResultDate>
+      <d:PackageCleanupResultDate m:type="Edm.DateTime" m:null="true"></d:PackageCleanupResultDate>
+      <d:PackageReviewedDate m:type="Edm.DateTime">2016-05-10T11:09:31.467</d:PackageReviewedDate>
+      <d:PackageApprovedDate m:type="Edm.DateTime">2016-05-10T11:09:31.467</d:PackageApprovedDate>
+      <d:PackageReviewer>dtgm</d:PackageReviewer>
+      <d:IsDownloadCacheAvailable m:type="Edm.Boolean">true</d:IsDownloadCacheAvailable>
+      <d:DownloadCacheStatus>Available</d:DownloadCacheStatus>
+      <d:DownloadCacheDate m:type="Edm.DateTime">2016-05-12T13:06:21.407</d:DownloadCacheDate>
+      <d:DownloadCache>https://github.com/HearthSim/Hearthstone-Deck-Tracker/releases/download/v0.14.7/Hearthstone.Deck.Tracker-v0.14.7.zip^x86/Hearthstone.Deck.Tracker-v0.14.7.zip^5B6F4F3A655FC71B9EBEDD5446E8232013D163F59D6739E1B0FEA28A5A4AB7B5D9039EC9E884EB22EE82D83A44C5E2C1F12C18AFE245E287A4234D798B911AF0</d:DownloadCache>
+      <d:PackageScanStatus>NotFlagged</d:PackageScanStatus>
+      <d:PackageScanResultDate m:type="Edm.DateTime">2016-05-09T01:51:25.997</d:PackageScanResultDate>
+      <d:PackageScanFlagResult>Unknown</d:PackageScanFlagResult>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://community.chocolatey.org/api/v2/Packages(Id='hearthstone-deck-tracker',Version='0.15.3')</id>
+    <title type="text">hearthstone-deck-tracker</title>
+    <summary type="text"></summary>
+    <updated>2025-09-16T12:49:51Z</updated>
+    <author>
+      <name>Epix37</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='hearthstone-deck-tracker',Version='0.15.3')/$value" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='hearthstone-deck-tracker',Version='0.15.3')" />
+    <category term="CCR.Website.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <content type="application/zip" src="https://community.chocolatey.org/api/v2/package/hearthstone-deck-tracker/0.15.3" />
+    <m:properties xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
+      <d:Version>0.15.3</d:Version>
+      <d:Title>Hearthstone Deck Tracker</d:Title>
+      <d:Description></d:Description>
+      <d:Tags></d:Tags>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-06-06T15:13:26.577</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:DownloadCount m:type="Edm.Int32">3927</d:DownloadCount>
+      <d:VersionDownloadCount m:type="Edm.Int32">346</d:VersionDownloadCount>
+      <d:GalleryDetailsUrl>https://community.chocolatey.org/packages/hearthstone-deck-tracker/0.15.3</d:GalleryDetailsUrl>
+      <d:ReportAbuseUrl>https://community.chocolatey.org/package/ReportAbuse/hearthstone-deck-tracker/0.15.3</d:ReportAbuseUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/HearthSim/Hearthstone-Deck-Tracker/master/Hearthstone Deck Tracker/Images/HearthstoneDeckTracker.ico</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language></d:Language>
+      <d:Published m:type="Edm.DateTime">2016-06-06T15:13:26.577</d:Published>
+      <d:LicenseUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/tree/master/licenses</d:LicenseUrl>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:PackageHash></d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">6569</d:PackageSize>
+      <d:ProjectUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker</d:ProjectUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:ProjectSourceUrl></d:ProjectSourceUrl>
+      <d:PackageSourceUrl>https://github.com/scowalt/chocolatey-Hearthstone-Deck-Tracker</d:PackageSourceUrl>
+      <d:DocsUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/wiki</d:DocsUrl>
+      <d:MailingListUrl></d:MailingListUrl>
+      <d:BugTrackerUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/issues</d:BugTrackerUrl>
+      <d:IsApproved m:type="Edm.Boolean">true</d:IsApproved>
+      <d:PackageStatus>Approved</d:PackageStatus>
+      <d:PackageSubmittedStatus>Waiting</d:PackageSubmittedStatus>
+      <d:PackageTestResultUrl>https://gist.github.com/654c4f56faa108dd4b115c12a3794df7</d:PackageTestResultUrl>
+      <d:PackageTestResultStatus>Passing</d:PackageTestResultStatus>
+      <d:PackageTestResultStatusDate m:type="Edm.DateTime">2016-06-06T15:54:44.757</d:PackageTestResultStatusDate>
+      <d:PackageValidationResultStatus>Passing</d:PackageValidationResultStatus>
+      <d:PackageValidationResultDate m:type="Edm.DateTime">2016-06-06T15:47:39.227</d:PackageValidationResultDate>
+      <d:PackageCleanupResultDate m:type="Edm.DateTime" m:null="true"></d:PackageCleanupResultDate>
+      <d:PackageReviewedDate m:type="Edm.DateTime">2016-06-08T20:49:24.837</d:PackageReviewedDate>
+      <d:PackageApprovedDate m:type="Edm.DateTime">2016-06-08T20:49:24.837</d:PackageApprovedDate>
+      <d:PackageReviewer>dtgm</d:PackageReviewer>
+      <d:IsDownloadCacheAvailable m:type="Edm.Boolean">true</d:IsDownloadCacheAvailable>
+      <d:DownloadCacheStatus>Available</d:DownloadCacheStatus>
+      <d:DownloadCacheDate m:type="Edm.DateTime">2016-06-08T21:52:12.693</d:DownloadCacheDate>
+      <d:DownloadCache>https://github.com/HearthSim/Hearthstone-Deck-Tracker/releases/download/v0.15.3/Hearthstone.Deck.Tracker-v0.15.3.zip^x86/Hearthstone.Deck.Tracker-v0.15.3.zip^B47C9986E1BC17269729518DEB871BD9C8BECA656103A93EE36817BA7A10491A1610CE4910430427B7D181F6DA528A4DD2C3403CC78E4DD576586A80BCDC94BD</d:DownloadCache>
+      <d:PackageScanStatus>NotFlagged</d:PackageScanStatus>
+      <d:PackageScanResultDate m:type="Edm.DateTime">2016-06-06T16:01:36.477</d:PackageScanResultDate>
+      <d:PackageScanFlagResult>Unknown</d:PackageScanFlagResult>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://community.chocolatey.org/api/v2/Packages(Id='hearthstone-deck-tracker',Version='0.14.9')</id>
+    <title type="text">hearthstone-deck-tracker</title>
+    <summary type="text"></summary>
+    <updated>2025-09-15T06:49:49Z</updated>
+    <author>
+      <name>Epix37</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='hearthstone-deck-tracker',Version='0.14.9')/$value" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='hearthstone-deck-tracker',Version='0.14.9')" />
+    <category term="CCR.Website.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <content type="application/zip" src="https://community.chocolatey.org/api/v2/package/hearthstone-deck-tracker/0.14.9" />
+    <m:properties xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
+      <d:Version>0.14.9</d:Version>
+      <d:Title>Hearthstone Deck Tracker</d:Title>
+      <d:Description></d:Description>
+      <d:Tags></d:Tags>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-05-21T17:58:34.007</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:DownloadCount m:type="Edm.Int32">3927</d:DownloadCount>
+      <d:VersionDownloadCount m:type="Edm.Int32">386</d:VersionDownloadCount>
+      <d:GalleryDetailsUrl>https://community.chocolatey.org/packages/hearthstone-deck-tracker/0.14.9</d:GalleryDetailsUrl>
+      <d:ReportAbuseUrl>https://community.chocolatey.org/package/ReportAbuse/hearthstone-deck-tracker/0.14.9</d:ReportAbuseUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/HearthSim/Hearthstone-Deck-Tracker/master/Hearthstone Deck Tracker/Images/HearthstoneDeckTracker.ico</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language></d:Language>
+      <d:Published m:type="Edm.DateTime">2016-05-21T17:58:34.007</d:Published>
+      <d:LicenseUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/tree/master/licenses</d:LicenseUrl>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:PackageHash></d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">6463</d:PackageSize>
+      <d:ProjectUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker</d:ProjectUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:ProjectSourceUrl></d:ProjectSourceUrl>
+      <d:PackageSourceUrl>https://github.com/scowalt/chocolatey-Hearthstone-Deck-Tracker</d:PackageSourceUrl>
+      <d:DocsUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/wiki</d:DocsUrl>
+      <d:MailingListUrl></d:MailingListUrl>
+      <d:BugTrackerUrl>https://github.com/HearthSim/Hearthstone-Deck-Tracker/issues</d:BugTrackerUrl>
+      <d:IsApproved m:type="Edm.Boolean">true</d:IsApproved>
+      <d:PackageStatus>Approved</d:PackageStatus>
+      <d:PackageSubmittedStatus>Waiting</d:PackageSubmittedStatus>
+      <d:PackageTestResultUrl>https://gist.github.com/ba838b00384bf4b12a15d78d90cf0e75</d:PackageTestResultUrl>
+      <d:PackageTestResultStatus>Passing</d:PackageTestResultStatus>
+      <d:PackageTestResultStatusDate m:type="Edm.DateTime">2016-05-21T18:40:58.697</d:PackageTestResultStatusDate>
+      <d:PackageValidationResultStatus>Passing</d:PackageValidationResultStatus>
+      <d:PackageValidationResultDate m:type="Edm.DateTime">2016-05-21T18:31:24.25</d:PackageValidationResultDate>
+      <d:PackageCleanupResultDate m:type="Edm.DateTime" m:null="true"></d:PackageCleanupResultDate>
+      <d:PackageReviewedDate m:type="Edm.DateTime">2016-05-22T12:54:56.403</d:PackageReviewedDate>
+      <d:PackageApprovedDate m:type="Edm.DateTime">2016-05-22T12:54:56.403</d:PackageApprovedDate>
+      <d:PackageReviewer>dtgm</d:PackageReviewer>
+      <d:IsDownloadCacheAvailable m:type="Edm.Boolean">true</d:IsDownloadCacheAvailable>
+      <d:DownloadCacheStatus>Available</d:DownloadCacheStatus>
+      <d:DownloadCacheDate m:type="Edm.DateTime">2016-05-22T13:56:36.797</d:DownloadCacheDate>
+      <d:DownloadCache>https://github.com/HearthSim/Hearthstone-Deck-Tracker/releases/download/v0.14.9/Hearthstone.Deck.Tracker-v0.14.9.zip^x86/Hearthstone.Deck.Tracker-v0.14.9.zip^B896D9DE46A9F1B87805D9EF5DBDBCEF598E0979D839F0249EAAC94DC6715AC69A8BCD17F70577EC71202E545DA8787D65F6E47E39874C4F7A02DB4E73F0B1F9</d:DownloadCache>
+      <d:PackageScanStatus>NotFlagged</d:PackageScanStatus>
+      <d:PackageScanResultDate m:type="Edm.DateTime">2016-05-21T19:00:12.84</d:PackageScanResultDate>
+      <d:PackageScanFlagResult>Unknown</d:PackageScanFlagResult>
+    </m:properties>
+  </entry>
+  <link rel="next" href="https://community.chocolatey.org/api/v2/FindPackagesById?id='hearthstone-deck-tracker'&amp;$skiptoken='1757918989540','0.14.9','hearthstone-deck-tracker'" />
+</feed>

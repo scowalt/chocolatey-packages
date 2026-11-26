@@ -1,28 +1,22 @@
 {
   "name": "chocolatey-packages",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
   "repository": "https://github.com/scowalt/chocolatey-packages.git",
   "license": "MIT",
-  "dependencies": {
-    "@octokit/rest": "^22.0.0",
-    "cheerio": "^1.0.0-rc.12",
-    "commander": "^11.1.0",
-    "fast-xml-parser": "^5.0.0",
-    "lodash": "^4.17.21",
-    "node-fetch": "3",
-    "ts-essentials": "^10.0.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.1.6"
+  "scripts": {
+    "check": "bun src/bin/check.ts",
+    "verify": "bun src/bin/verify.ts",
+    "daily:plan": "bun src/bin/plan.ts",
+    "daily:install": "bun src/bin/install.ts",
+    "daily:publish": "bun src/bin/publish.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "check:comments": "uv run --no-project --python 3.14 --with-requirements .comment-policy/requirements.txt python .comment-policy/check.py"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.195",
-    "@types/node": "^24.0.0",
-    "@types/node-fetch": "^2.6.4",
-    "@types/semver": "^7.5.0",
-    "prettier": "^3.0.0"
-  },
-  "scripts": {
-    "test": "ts-node scripts/test.ts"
+    "@types/bun": "1.4.4",
+    "typescript": "6.0.3"
   }
 }

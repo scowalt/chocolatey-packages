@@ -1,4 +1,4 @@
-﻿$packageName = 'Listary'
+$packageName = 'Listary'
 $uninstallerType = 'exe'
 $silentArgs = '/SP /VERYSILENT /NORESTART /SUPPRESSMSGBOXES'
 $uninstallerFileName = 'unins000.exe'

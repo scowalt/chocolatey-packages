@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<entry xml:base="https://community.chocolatey.org/api/v2/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://community.chocolatey.org/api/v2/Packages(Id='iconpackager',Version='10.3.0.20261120')</id>
+  <title type="text">iconpackager</title>
+  <summary type="text">Change your Windows desktop icons</summary>
+  <updated>2026-11-21T02:10:35Z</updated>
+  <author>
+    <name>Stardock</name>
+  </author>
+  <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='iconpackager',Version='10.3.0.20261120')/$value" />
+  <link rel="edit" title="V2FeedPackage" href="Packages(Id='iconpackager',Version='10.3.0.20261120')" />
+  <category term="CCR.Website.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <content type="application/zip" src="https://community.chocolatey.org/api/v2/package/iconpackager/10.3.0.20261120" />
+  <m:properties xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
+    <d:Version>10.3.0.20261120</d:Version>
+    <d:Title>IconPackager</d:Title>
+    <d:Description>Change all your Windows icons at once with custom icon packages.
+
+NOTE: This is commercial software, and only provides a trial version. Full usage will require the purchase of a license.
+
+**Please Note**: This is an automatically updated package. If you find it is out of date by more than a day or two, please contact the maintainer(s) and let them know the package is no longer updating correctly.</d:Description>
+    <d:Tags>stardock objectdesktop suite iconpackager trial</d:Tags>
+    <d:Copyright>Copyright © 2026 Stardock</d:Copyright>
+    <d:Created m:type="Edm.DateTime">2026-11-20T17:37:23.26</d:Created>
+    <d:Dependencies></d:Dependencies>
+    <d:DownloadCount m:type="Edm.Int32">0</d:DownloadCount>
+    <d:VersionDownloadCount m:type="Edm.Int32">5</d:VersionDownloadCount>
+    <d:GalleryDetailsUrl>https://community.chocolatey.org/packages/iconpackager/10.3.0.20261120</d:GalleryDetailsUrl>
+    <d:ReportAbuseUrl>https://community.chocolatey.org/package/ReportAbuse/iconpackager/10.3.0.20261120</d:ReportAbuseUrl>
+    <d:IconUrl>https://cdn.jsdelivr.net/gh/virtualex-itv/chocolatey-packages@877660a895a3b1522a6105e5b8ccd07b032308dc/icons/iconpackager.png</d:IconUrl>
+    <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+    <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+    <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+    <d:Language m:null="true"></d:Language>
+    <d:Published m:type="Edm.DateTime">1900-01-01T00:00:00</d:Published>
+    <d:LicenseUrl>https://www.stardock.com/support/software-eula</d:LicenseUrl>
+    <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+    <d:PackageHash>jXKBSp3Fu+Fnj1PZWZmiCNqiantrA5B89iIMmHn0uDgYKPA1LmRW1e+bah/6Ca5uDVV7PdQJn4uwFASTEjF3Tg==</d:PackageHash>
+    <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+    <d:PackageSize m:type="Edm.Int64">3658</d:PackageSize>
+    <d:ProjectUrl>https://www.stardock.com/products/iconpackager/</d:ProjectUrl>
+    <d:ReleaseNotes>https://www.stardock.com/products/iconpackager/history</d:ReleaseNotes>
+    <d:ProjectSourceUrl></d:ProjectSourceUrl>
+    <d:PackageSourceUrl>https://github.com/virtualex-itv/chocolatey-packages/tree/master/automatic/iconpackager</d:PackageSourceUrl>
+    <d:DocsUrl>https://forums.stardock.com/485953/iconpackager-support-faq</d:DocsUrl>
+    <d:MailingListUrl></d:MailingListUrl>
+    <d:BugTrackerUrl></d:BugTrackerUrl>
+    <d:IsApproved m:type="Edm.Boolean">false</d:IsApproved>
+    <d:PackageStatus>Submitted</d:PackageStatus>
+    <d:PackageSubmittedStatus>Ready</d:PackageSubmittedStatus>
+    <d:PackageTestResultUrl>https://gist.github.com/choco-bot/e59091a25ad24a2c3794f2089c26157c</d:PackageTestResultUrl>
+    <d:PackageTestResultStatus>Passing</d:PackageTestResultStatus>
+    <d:PackageTestResultStatusDate m:type="Edm.DateTime">2026-11-20T18:22:32.993</d:PackageTestResultStatusDate>
+    <d:PackageValidationResultStatus>Passing</d:PackageValidationResultStatus>
+    <d:PackageValidationResultDate m:type="Edm.DateTime">2026-11-20T18:10:54.023</d:PackageValidationResultDate>
+    <d:PackageCleanupResultDate m:type="Edm.DateTime" m:null="true"></d:PackageCleanupResultDate>
+    <d:PackageReviewedDate m:type="Edm.DateTime" m:null="true"></d:PackageReviewedDate>
+    <d:PackageApprovedDate m:type="Edm.DateTime" m:null="true"></d:PackageApprovedDate>
+    <d:PackageReviewer></d:PackageReviewer>
+    <d:IsDownloadCacheAvailable m:type="Edm.Boolean">false</d:IsDownloadCacheAvailable>
+    <d:DownloadCacheStatus>Unknown</d:DownloadCacheStatus>
+    <d:DownloadCacheDate m:type="Edm.DateTime" m:null="true"></d:DownloadCacheDate>
+    <d:DownloadCache m:null="true"></d:DownloadCache>
+    <d:PackageScanStatus>NotFlagged</d:PackageScanStatus>
+    <d:PackageScanResultDate m:type="Edm.DateTime">2026-11-21T02:10:35.4053352Z</d:PackageScanResultDate>
+    <d:PackageScanFlagResult>None</d:PackageScanFlagResult>
+  </m:properties>
+</entry>

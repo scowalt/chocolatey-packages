@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>project64</id>
+    <version>3.0.1.20261126</version>
+    <packageSourceUrl>https://github.com/scowalt/chocolatey-packages/tree/master/packages/project64</packageSourceUrl>
+    <owners>scowalt</owners>
+
+    <title>Project64</title>
+    <authors>Project64 contributors</authors>
+    <projectUrl>https://www.pj64-emu.com/</projectUrl>
+    <iconUrl>https://upload.wikimedia.org/wikipedia/commons/f/f2/Project_64_logo.png</iconUrl>
+    <licenseUrl>https://github.com/project64/project64/blob/develop/license.md</licenseUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/project64/project64</projectSourceUrl>
+    <docsUrl>https://github.com/project64/project64/wiki</docsUrl>
+    <bugTrackerUrl>https://github.com/project64/project64/issues</bugTrackerUrl>
+    <tags>project64 n64 nintendo 64 admin</tags>
+    <summary>N64 Emulator</summary>
+    <description>Project64 is a Nintendo 64 emulator written in the programming language C for the operating system Windows.</description>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

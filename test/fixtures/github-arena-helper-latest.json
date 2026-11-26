@@ -1,0 +1,10 @@
+{
+  "tag_name": "0.9.6",
+  "prerelease": false,
+  "assets": [
+    {
+      "name": "ArenaHelper.v0.9.6.zip",
+      "browser_download_url": "https://github.com/rembound/Arena-Helper/releases/download/0.9.6/ArenaHelper.v0.9.6.zip"
+    }
+  ]
+}
