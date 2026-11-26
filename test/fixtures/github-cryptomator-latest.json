@@ -1,0 +1,22 @@
+{
+  "tag_name": "1.19.7",
+  "prerelease": false,
+  "assets": [
+    {
+      "name": "Cryptomator-1.19.7-x64.dmg",
+      "browser_download_url": "https://github.com/cryptomator/cryptomator/releases/download/1.19.7/Cryptomator-1.19.7-x64.dmg"
+    },
+    {
+      "name": "Cryptomator-1.19.7-x64.exe",
+      "browser_download_url": "https://github.com/cryptomator/cryptomator/releases/download/1.19.7/Cryptomator-1.19.7-x64.exe"
+    },
+    {
+      "name": "Cryptomator-1.19.7-x64.msi",
+      "browser_download_url": "https://github.com/cryptomator/cryptomator/releases/download/1.19.7/Cryptomator-1.19.7-x64.msi"
+    },
+    {
+      "name": "cryptomator_1.19.7-0ppa1_amd64.deb",
+      "browser_download_url": "https://github.com/cryptomator/cryptomator/releases/download/1.19.7/cryptomator_1.19.7-0ppa1_amd64.deb"
+    }
+  ]
+}
