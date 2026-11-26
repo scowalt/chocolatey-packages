@@ -1,23 +1,66 @@
 import { describe, expect, test } from "bun:test";
 import type { FeedStatus } from "../src/community.ts";
-import { actionable, plan, samePlan, versionsToLookUp, type Plan } from "../src/plan.ts";
+import { plan, targetOf, type Plan } from "../src/plan.ts";
 import { parseNuspecVersion } from "../src/version.ts";
 
-function planFor(nuspec: string, upstream: string, feed: Record<string, FeedStatus>): Plan {
-  return plan(parseNuspecVersion(nuspec), upstream, feed);
+function target(nuspec: string, upstream: string) {
+  return targetOf(parseNuspecVersion(nuspec), upstream);
 }
 
-describe("plan", () => {
-  test("a new package at upstream's version is published", () => {
-    expect(planFor("1.55.6", "1.55.6", { "1.55.6": "absent" })).toEqual({
-      kind: "publish",
-      version: "1.55.6",
+function planFor(nuspec: string, upstream: string, status: FeedStatus): Plan {
+  const chosen = target(nuspec, upstream);
+  return chosen.kind === "ahead" ? chosen : plan(chosen, status);
+}
+
+describe("targetOf", () => {
+  test("a newer upstream is the target and rewrites the package", () => {
+    expect(target("1.19.2", "1.19.7")).toEqual({ kind: "target", version: "1.19.7", rewrite: true });
+  });
+
+  test("an equal upstream keeps the nuspec's version", () => {
+    expect(target("1.19.2", "1.19.2")).toEqual({ kind: "target", version: "1.19.2", rewrite: false });
+  });
+
+  test("a fix version of the current release is kept, not rewritten to upstream's plain version", () => {
+    expect(target("3.0.1.20261126", "3.0.1")).toEqual({
+      kind: "target",
+      version: "3.0.1.20261126",
       rewrite: false,
     });
   });
 
+  test("a newer upstream than a fix version rewrites to upstream's version", () => {
+    expect(target("3.0.1.20261126", "3.0.2")).toEqual({ kind: "target", version: "3.0.2", rewrite: true });
+  });
+
+  test("a four segment upstream version equal to the nuspec is kept", () => {
+    expect(target("6.3.5.94", "6.3.5.94")).toEqual({ kind: "target", version: "6.3.5.94", rewrite: false });
+  });
+
+  test("an upstream version that looks like a fix date does not rewrite forever", () => {
+    expect(target("2.0.0.20261126", "2.0.0.20261126")).toEqual({
+      kind: "target",
+      version: "2.0.0.20261126",
+      rewrite: false,
+    });
+  });
+
+  test("compares versions as numbers, not as text", () => {
+    expect(target("1.19.9", "1.19.10")).toEqual({ kind: "target", version: "1.19.10", rewrite: true });
+  });
+
+  test("an upstream older than the nuspec is ahead and nothing is rewritten", () => {
+    expect(target("1.19.8", "1.19.7")).toEqual({ kind: "ahead", nuspec: "1.19.8", upstream: "1.19.7" });
+  });
+});
+
+describe("plan", () => {
+  test("a version the feed does not have is published", () => {
+    expect(planFor("1.55.6", "1.55.6", "absent")).toEqual({ kind: "publish", version: "1.55.6", rewrite: false });
+  });
+
   test("a fix version of upstream's release is published", () => {
-    expect(planFor("3.0.1.20261126", "3.0.1", { "3.0.1.20261126": "absent" })).toEqual({
+    expect(planFor("3.0.1.20261126", "3.0.1", "absent")).toEqual({
       kind: "publish",
       version: "3.0.1.20261126",
       rewrite: false,
@@ -25,110 +68,23 @@ describe("plan", () => {
   });
 
   test("an approved version is not published", () => {
-    expect(planFor("1.19.2", "1.19.2", { "1.19.2": "approved" })).toEqual({
-      kind: "approved",
-      version: "1.19.2",
-      rewrite: false,
-    });
+    expect(planFor("1.19.2", "1.19.2", "approved")).toEqual({ kind: "approved", version: "1.19.2", rewrite: false });
   });
 
   test("a version waiting in moderation is not published again", () => {
-    expect(planFor("1.19.2", "1.19.2", { "1.19.2": "submitted" })).toEqual({
-      kind: "moderation",
-      version: "1.19.2",
-      rewrite: false,
-    });
+    expect(planFor("1.19.2", "1.19.2", "submitted")).toEqual({ kind: "moderation", version: "1.19.2", rewrite: false });
   });
 
-  test("a rejected version is a problem and is not published", () => {
-    const decision = planFor("1.19.2", "1.19.2", { "1.19.2": "rejected" });
-    expect(decision.kind).toBe("rejected");
-    expect(() => actionable(decision)).toThrow("rejected");
+  test("a rejected version is not published", () => {
+    expect(planFor("1.19.2", "1.19.2", "rejected")).toEqual({ kind: "rejected", version: "1.19.2", rewrite: false });
   });
 
   test("a newer upstream rewrites to upstream's version and publishes it", () => {
-    expect(planFor("1.19.2", "1.19.7", { "1.19.7": "absent" })).toEqual({
-      kind: "publish",
-      version: "1.19.7",
-      rewrite: true,
-    });
-  });
-
-  test("a newer upstream than a fix version rewrites to upstream's version", () => {
-    expect(planFor("3.0.1.20261126", "3.0.2", { "3.0.2": "absent" })).toEqual({
-      kind: "publish",
-      version: "3.0.2",
-      rewrite: true,
-    });
-  });
-
-  test("an upstream older than the nuspec is ahead and nothing is rewritten", () => {
-    const decision = planFor("1.19.8", "1.19.7", {});
-    expect(decision).toEqual({ kind: "ahead", nuspec: "1.19.8", upstream: "1.19.7" });
-    expect(() => actionable(decision)).toThrow("nothing is rewritten downward");
+    expect(planFor("1.19.2", "1.19.7", "absent")).toEqual({ kind: "publish", version: "1.19.7", rewrite: true });
   });
 
   test("after a crash between push and commit the files are rewritten again and nothing is pushed", () => {
-    for (const status of ["submitted", "approved"] as const) {
-      const decision = planFor("1.19.2", "1.19.7", { "1.19.7": status });
-      expect(decision).toEqual({
-        kind: status === "submitted" ? "moderation" : "approved",
-        version: "1.19.7",
-        rewrite: true,
-      });
-    }
-  });
-
-  test("a fix version of the current release is kept, not rewritten to upstream's plain version", () => {
-    expect(planFor("3.0.1.20261126", "3.0.1", { "3.0.1.20261126": "approved" })).toEqual({
-      kind: "approved",
-      version: "3.0.1.20261126",
-      rewrite: false,
-    });
-  });
-
-  test("a four segment upstream version equal to the nuspec is kept", () => {
-    expect(planFor("6.3.5.94", "6.3.5.94", { "6.3.5.94": "approved" }).kind).toBe("approved");
-  });
-
-  test("an upstream version that looks like a fix date does not rewrite forever", () => {
-    expect(planFor("2.0.0.20261126", "2.0.0.20261126", { "2.0.0.20261126": "approved" })).toEqual({
-      kind: "approved",
-      version: "2.0.0.20261126",
-      rewrite: false,
-    });
-  });
-
-  test("compares versions as numbers, not as text", () => {
-    expect(planFor("1.19.9", "1.19.10", { "1.19.10": "absent" })).toEqual({
-      kind: "publish",
-      version: "1.19.10",
-      rewrite: true,
-    });
-  });
-
-  test("a missing feed status is a programming error", () => {
-    expect(() => planFor("1.0.0", "1.0.0", {})).toThrow("No feed status for 1.0.0");
-  });
-});
-
-describe("versionsToLookUp", () => {
-  test("is the nuspec's version and upstream's, once each", () => {
-    expect(versionsToLookUp(parseNuspecVersion("1.0.0"), "1.0.0")).toEqual(["1.0.0"]);
-    expect(versionsToLookUp(parseNuspecVersion("3.0.1.20261126"), "3.0.2")).toEqual([
-      "3.0.1.20261126",
-      "3.0.2",
-    ]);
-  });
-});
-
-describe("samePlan", () => {
-  test("compares kind, version and rewrite", () => {
-    const publish: Plan = { kind: "publish", version: "1.0.0", rewrite: false };
-    expect(samePlan(publish, { ...publish })).toBe(true);
-    expect(samePlan(publish, { ...publish, rewrite: true })).toBe(false);
-    expect(samePlan(publish, { ...publish, version: "1.0.1" })).toBe(false);
-    expect(samePlan(publish, { kind: "approved", version: "1.0.0", rewrite: false })).toBe(false);
-    expect(samePlan(publish, { kind: "ahead", nuspec: "2", upstream: "1" })).toBe(false);
+    expect(planFor("1.19.2", "1.19.7", "submitted")).toEqual({ kind: "moderation", version: "1.19.7", rewrite: true });
+    expect(planFor("1.19.2", "1.19.7", "approved")).toEqual({ kind: "approved", version: "1.19.7", rewrite: true });
   });
 });

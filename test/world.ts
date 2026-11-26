@@ -34,6 +34,7 @@ export interface WorldOptions {
   readonly upstream?: Readonly<Record<string, string>>;
   readonly feed?: Readonly<Record<string, FeedStatus>>;
   readonly feedFailures?: readonly string[];
+  readonly listingFails?: boolean;
 }
 
 export function feedUrl(id: string, version: string): string {
@@ -91,7 +92,9 @@ export function buildWorld(options: WorldOptions = {}): World {
       );
       downloads["https://www.pj64-emu.com/file/setup-project64-3-0-1-5664-2df3434/"] = "";
     }
-    responses[`${API}FindPackagesById()?id='${id}'`] = EMPTY_FEED;
+    responses[`${API}FindPackagesById()?id='${id}'`] = options.listingFails
+      ? { status: 503, body: "" }
+      : EMPTY_FEED;
     const versions = new Set([NUSPEC_VERSIONS[id] ?? version, version]);
     for (const candidate of versions) {
       const key = `${id}@${candidate}`;

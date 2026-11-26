@@ -8,37 +8,35 @@ export type Plan =
   | { readonly kind: "approved"; readonly version: string; readonly rewrite: boolean }
   | { readonly kind: "publish"; readonly version: string; readonly rewrite: boolean };
 
-export type FeedStatuses = Readonly<Record<string, FeedStatus>>;
-
-export function versionsToLookUp(nuspec: NuspecVersion, upstream: string): string[] {
-  return [...new Set([versionText(nuspec), upstream])];
+export interface Target {
+  readonly kind: "target";
+  readonly version: string;
+  readonly rewrite: boolean;
 }
 
-function targetOf(
-  nuspec: NuspecVersion,
-  upstream: string,
-): { readonly version: string; readonly rewrite: boolean } | null {
+export type Ahead = Extract<Plan, { kind: "ahead" }>;
+
+export function targetOf(nuspec: NuspecVersion, upstream: string): Ahead | Target {
   const current = versionText(nuspec);
-  if (current === upstream) return { version: current, rewrite: false };
+  if (current === upstream) return { kind: "target", version: current, rewrite: false };
   const order = compareVersions(upstream, nuspec.upstream);
-  if (order < 0) return null;
-  return order === 0 ? { version: current, rewrite: false } : { version: upstream, rewrite: true };
+  if (order < 0) return { kind: "ahead", nuspec: current, upstream };
+  return order === 0
+    ? { kind: "target", version: current, rewrite: false }
+    : { kind: "target", version: upstream, rewrite: true };
 }
 
-export function plan(nuspec: NuspecVersion, upstream: string, feed: FeedStatuses): Plan {
-  const target = targetOf(nuspec, upstream);
-  if (target === null) return { kind: "ahead", nuspec: versionText(nuspec), upstream };
-  const status = feed[target.version];
-  if (status === undefined) throw new Error(`No feed status for ${target.version}`);
+export function plan(target: Target, status: FeedStatus): Exclude<Plan, Ahead> {
+  const { version, rewrite } = target;
   switch (status) {
     case "approved":
-      return { kind: "approved", ...target };
+      return { kind: "approved", version, rewrite };
     case "submitted":
-      return { kind: "moderation", ...target };
+      return { kind: "moderation", version, rewrite };
     case "rejected":
-      return { kind: "rejected", ...target };
+      return { kind: "rejected", version, rewrite };
     case "absent":
-      return { kind: "publish", ...target };
+      return { kind: "publish", version, rewrite };
   }
 }
 
