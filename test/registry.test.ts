@@ -1,13 +1,25 @@
 import { describe, expect, test } from "bun:test";
 import { readdirSync } from "node:fs";
 import { PACKAGES_DIR, applyRevision, nuspecVersion, readPackage } from "../src/package-files.ts";
-import { packages } from "../src/registry.ts";
+import { packages, selectPackages } from "../src/registry.ts";
 import { versionText } from "../src/version.ts";
 
 describe("registry", () => {
   test("every folder under packages is registered and every entry has a folder", () => {
     const folders = readdirSync(PACKAGES_DIR).sort();
     expect(packages.map((definition) => definition.id).sort()).toEqual(folders);
+  });
+
+  test("no ids selects every package, and named ids select just those", () => {
+    expect(selectPackages([])).toEqual(packages);
+    expect(selectPackages(["stepmania", "cryptomator"]).map((definition) => definition.id)).toEqual([
+      "stepmania",
+      "cryptomator",
+    ]);
+  });
+
+  test("an unknown id is refused", () => {
+    expect(() => selectPackages(["cryptomator", "nope"])).toThrow("Unknown package: nope");
   });
 
   for (const { id } of packages) {

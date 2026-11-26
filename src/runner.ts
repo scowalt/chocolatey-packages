@@ -1,10 +1,8 @@
+import { errorMessage } from "./errors.ts";
+
 export type Outcome<T> =
   | { readonly id: string; readonly ok: true; readonly value: T }
   | { readonly id: string; readonly ok: false; readonly message: string };
-
-export function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
 
 export function group(title: string): void {
   console.log(process.env.GITHUB_ACTIONS ? `::group::${title}` : `\n== ${title}`);
@@ -14,13 +12,18 @@ export function endGroup(): void {
   if (process.env.GITHUB_ACTIONS) console.log("::endgroup::");
 }
 
-export async function attempt<T>(
-  id: string,
-  step: (id: string) => Promise<T>,
+export interface Identified {
+  readonly id: string;
+}
+
+export async function attempt<P extends Identified, T>(
+  item: P,
+  step: (item: P) => Promise<T>,
   refusal: (value: T) => string | undefined = () => undefined,
 ): Promise<Outcome<T>> {
+  const { id } = item;
   try {
-    const value = await step(id);
+    const value = await step(item);
     const refused = refusal(value);
     return refused === undefined ? { id, ok: true, value } : { id, ok: false, message: refused };
   } catch (error) {
@@ -28,17 +31,17 @@ export async function attempt<T>(
   }
 }
 
-export async function forEachPackage<T>(
-  ids: readonly string[],
+export async function forEachPackage<P extends Identified, T>(
+  items: readonly P[],
   title: string,
-  step: (id: string) => Promise<T>,
+  step: (item: P) => Promise<T>,
   refusal?: (value: T) => string | undefined,
 ): Promise<Outcome<T>[]> {
   const outcomes: Outcome<T>[] = [];
-  for (const id of ids) {
-    group(`${title} ${id}`);
-    const outcome = await attempt(id, step, refusal);
-    if (!outcome.ok) console.error(`${id}: ${outcome.message}`);
+  for (const item of items) {
+    group(`${title} ${item.id}`);
+    const outcome = await attempt(item, step, refusal);
+    if (!outcome.ok) console.error(`${item.id}: ${outcome.message}`);
     outcomes.push(outcome);
     endGroup();
   }

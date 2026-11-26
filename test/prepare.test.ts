@@ -19,7 +19,7 @@ function reportPath(): string {
 describe("verifyPackages", () => {
   test("packs and installs every package and keeps going after a failure", async () => {
     const choco = fakeChoco({ failInstall: ["project64"], failPack: ["stepmania"] });
-    const verification = await verifyPackages(ALL, "out", choco);
+    const verification = await verifyPackages(packages, "out", choco);
     expect(verification.passed).toEqual(ALL.filter((id) => id !== "project64" && id !== "stepmania"));
     expect(verification.failures).toEqual(["stepmania: pack stepmania failed", "project64: install project64 failed"]);
     expect(choco.installed).not.toContain("stepmania");

@@ -73,3 +73,7 @@ export function definitionOf(id: string): PackageDefinition {
   if (found === undefined) throw new Error(`Unknown package: ${id}`);
   return found;
 }
+
+export function selectPackages(ids: readonly string[]): readonly PackageDefinition[] {
+  return ids.length === 0 ? packages : ids.map(definitionOf);
+}

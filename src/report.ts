@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { errorMessage } from "./runner.ts";
+import { errorMessage } from "./errors.ts";
 
 export interface PrepareEntry {
   readonly id: string;

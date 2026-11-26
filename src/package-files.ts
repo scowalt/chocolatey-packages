@@ -5,9 +5,9 @@ import { parseNuspecVersion, type NuspecVersion } from "./version.ts";
 
 export const PACKAGES_DIR = join(import.meta.dir, "..", "packages");
 
-export interface FilePair<T = string> {
-  readonly nuspec: T;
-  readonly install: T;
+export interface FilePair {
+  readonly nuspec: string;
+  readonly install: string;
 }
 
 export function pathsFor(id: string, dir: string = PACKAGES_DIR): FilePair {

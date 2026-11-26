@@ -2,7 +2,7 @@ import { latestApprovedVersion } from "./community.ts";
 import type { Http } from "./http.ts";
 import { PACKAGES_DIR } from "./package-files.ts";
 import { onFeed, standingOf } from "./plan.ts";
-import { definitionOf, packages } from "./registry.ts";
+import { packages } from "./registry.ts";
 import { attempt, type Outcome } from "./runner.ts";
 import { surveyPackage, type Survey } from "./survey.ts";
 import { versionText } from "./version.ts";
@@ -54,11 +54,11 @@ export interface CheckResult {
 
 export async function checkPackages(http: Http, dir: string = PACKAGES_DIR): Promise<CheckResult> {
   const outcomes = await Promise.all(
-    packages.map(({ id }) =>
-      attempt(id, async () => {
+    packages.map((definition) =>
+      attempt(definition, async () => {
         const [survey, latestApproved] = await Promise.all([
-          surveyPackage(definitionOf(id), http, dir),
-          latestApprovedVersion(id, http),
+          surveyPackage(definition, http, dir),
+          latestApprovedVersion(definition.id, http),
         ]);
         return { ...survey, latestApproved };
       }),

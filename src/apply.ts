@@ -8,22 +8,22 @@ import {
   type FilePair,
 } from "./package-files.ts";
 import { problemOf, type Plan } from "./plan.ts";
-import { definitionOf, packages, type PackageDefinition } from "./registry.ts";
+import { packages, type PackageDefinition } from "./registry.ts";
 import { forEachPackage, type Outcome } from "./runner.ts";
 import { surveyPackage } from "./survey.ts";
 
-export interface Derived {
+export interface Applied {
   readonly id: string;
   readonly plan: Plan;
   readonly hash: string;
   readonly original: FilePair;
 }
 
-export async function derivePackage(
+export async function applyPlan(
   definition: PackageDefinition,
   http: Http,
   dir: string = PACKAGES_DIR,
-): Promise<Derived> {
+): Promise<Applied> {
   const survey = await surveyPackage(definition, http, dir);
   const decision = survey.plan;
   const original = readPackage(definition.id, dir);
@@ -43,11 +43,11 @@ export async function derivePackage(
   return { id: definition.id, plan: decision, hash: hashPackage(definition.id, dir), original };
 }
 
-export function deriveAll(http: Http, dir: string = PACKAGES_DIR): Promise<Outcome<Derived>[]> {
+export function applyPlans(http: Http, dir: string = PACKAGES_DIR): Promise<Outcome<Applied>[]> {
   return forEachPackage(
-    packages.map((definition) => definition.id),
-    "derive",
-    (id) => derivePackage(definitionOf(id), http, dir),
-    (derived) => problemOf(derived.plan),
+    packages,
+    "apply",
+    (definition) => applyPlan(definition, http, dir),
+    (applied) => problemOf(applied.plan),
   );
 }

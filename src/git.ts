@@ -1,4 +1,4 @@
-import { errorMessage } from "./runner.ts";
+import { errorMessage } from "./errors.ts";
 
 const IDENTITY = [
   "-c",
