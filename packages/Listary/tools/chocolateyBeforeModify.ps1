@@ -1,2 +1,1 @@
-# Close Listary if open
-Get-Process "Listary" -ErrorAction SilentlyContinue | stop-process
+Get-Process 'Listary' -ErrorAction SilentlyContinue | Stop-Process

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>hearthstone-deck-tracker-arena-helper</id>
+    <title>Arena Helper</title>
+    <version>0.9.6</version>
+    <authors>rembound</authors>
+    <owners>scowalt</owners>
+    <summary>Arena Helper is a plugin for Hearthstone Deck Tracker that helps drafting Hearthstone arena decks by showing an overlay with card values from a tier list.</summary>
+    <description>Arena Helper is a plugin for Hearthstone Deck Tracker that helps drafting Hearthstone arena decks by showing an overlay with card values from a tier list. The plugin tries to visually detect the arena heroes and card choices. Detected cards are displayed alongside the value of the card, that is specified in The Lightforge: Hearthstone Arena Tier List. The created deck can be saved to Hearthstone Deck Tracker.
+    </description>
+    <projectUrl>https://github.com/rembound/Arena-Helper</projectUrl>
+    <packageSourceUrl>https://github.com/scowalt/chocolatey-packages/tree/master/packages/hearthstone-deck-tracker-arena-helper</packageSourceUrl>
+    <bugTrackerUrl>https://github.com/rembound/Arena-Helper/issues</bugTrackerUrl>
+    <tags>hearthstone-deck-tracker-arena-helper hearthstone-deck-tracker hearthstone</tags>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <dependencies>
+      <dependency id="hearthstone-deck-tracker" />
+    </dependencies>
+    <releaseNotes>https://github.com/rembound/Arena-Helper/releases</releaseNotes>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
