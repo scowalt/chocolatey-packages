@@ -272,7 +272,7 @@ describe("publishPackages", () => {
       feed: { "cryptomator@1.19.7": "rejected" },
     });
     expect(recorded.pushed).toEqual([]);
-    expect(problems).toEqual(["cryptomator: 1.19.7 was rejected by Chocolatey moderation; publish a fix version"]);
+    expect(problems).toEqual(["cryptomator: 1.19.7 was rejected by Chocolatey moderation; write a fix version by hand: its nuspec version, URL and checksum"]);
   });
 
   test("a nuspec newer than upstream is an error and is never rewritten", async () => {
