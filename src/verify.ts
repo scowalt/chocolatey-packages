@@ -1,32 +1,21 @@
-import { installAndUninstall, outputDirectory, pack } from "./choco.ts";
-import { endGroup, group, selectedIds } from "./selection.ts";
+import type { Choco } from "./choco.ts";
+import { failures, forEachPackage } from "./runner.ts";
 
-const ids = selectedIds(process.argv.slice(2));
-const out = outputDirectory();
-const failures: string[] = [];
-
-for (const id of ids) {
-  group(`pack ${id}`);
-  try {
-    await pack(id, out);
-  } catch (error) {
-    failures.push(`${id}: ${error instanceof Error ? error.message : String(error)}`);
-  }
-  endGroup();
+export interface Verification {
+  readonly passed: readonly string[];
+  readonly failures: readonly string[];
 }
 
-for (const id of ids) {
-  group(`install ${id}`);
-  try {
-    await installAndUninstall(id, out);
-  } catch (error) {
-    failures.push(`${id}: ${error instanceof Error ? error.message : String(error)}`);
-  }
-  endGroup();
+export async function verifyPackages(
+  ids: readonly string[],
+  out: string,
+  choco: Pick<Choco, "pack" | "installAndUninstall">,
+): Promise<Verification> {
+  const packed = await forEachPackage(ids, "pack", (id) => choco.pack(id, out));
+  const packable = packed.filter((outcome) => outcome.ok).map((outcome) => outcome.id);
+  const installed = await forEachPackage(packable, "install", (id) => choco.installAndUninstall(id, out));
+  return {
+    passed: installed.filter((outcome) => outcome.ok).map((outcome) => outcome.id),
+    failures: [...failures(packed), ...failures(installed)],
+  };
 }
-
-if (failures.length > 0) {
-  console.error(`Verification failed:\n${failures.join("\n")}`);
-  process.exit(1);
-}
-console.log(`Verified: ${ids.join(", ")}`);

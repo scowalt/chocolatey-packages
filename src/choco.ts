@@ -1,6 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { PACKAGES_DIR, pathsFor, nuspecVersion, readPackage } from "./package-files.ts";
+import { PACKAGES_DIR, nuspecVersion, pathsFor, readPackage } from "./package-files.ts";
+import { versionText } from "./version.ts";
 
 export const COMMUNITY_FEED = "https://community.chocolatey.org/api/v2/";
 export const PUSH_SOURCE = "https://push.chocolatey.org/";
@@ -12,7 +13,7 @@ export interface Run {
   readonly output: string;
 }
 
-export async function choco(args: readonly string[], cwd?: string): Promise<Run> {
+export async function runChoco(args: readonly string[], cwd?: string): Promise<Run> {
   const child = Bun.spawn(["choco", ...args], { cwd, stdout: "pipe", stderr: "pipe" });
   const decoder = new TextDecoder();
   let output = "";
@@ -40,7 +41,7 @@ export function createdPackagePath(output: string): string {
 }
 
 export async function pack(id: string, out: string): Promise<string> {
-  const run = await choco(
+  const run = await runChoco(
     ["pack", pathsFor(id).nuspec, "--outputdirectory", out],
     join(PACKAGES_DIR, id),
   );
@@ -49,8 +50,8 @@ export async function pack(id: string, out: string): Promise<string> {
 }
 
 export async function installAndUninstall(id: string, out: string): Promise<void> {
-  const version = nuspecVersion(readPackage(id).nuspec);
-  const install = await choco([
+  const version = versionText(nuspecVersion(readPackage(id).nuspec));
+  const install = await runChoco([
     "install",
     id,
     "--version",
@@ -63,7 +64,7 @@ export async function installAndUninstall(id: string, out: string): Promise<void
   if (!INSTALL_OK_EXIT_CODES.has(install.code)) {
     throw new Error(`choco install ${id} exited with ${install.code}`);
   }
-  const uninstall = await choco(["uninstall", id, "--yes", "--no-progress"]);
+  const uninstall = await runChoco(["uninstall", id, "--yes", "--no-progress"]);
   if (!INSTALL_OK_EXIT_CODES.has(uninstall.code)) {
     throw new Error(`choco uninstall ${id} exited with ${uninstall.code}`);
   }
@@ -77,5 +78,13 @@ export function classifyPush(run: Run): PushOutcome {
 }
 
 export async function push(nupkg: string, apiKey: string): Promise<PushOutcome> {
-  return classifyPush(await choco(["push", nupkg, "--source", PUSH_SOURCE, "--api-key", apiKey]));
+  return classifyPush(await runChoco(["push", nupkg, "--source", PUSH_SOURCE, "--api-key", apiKey]));
 }
+
+export interface Choco {
+  pack(id: string, out: string): Promise<string>;
+  installAndUninstall(id: string, out: string): Promise<void>;
+  push(nupkg: string, apiKey: string): Promise<PushOutcome>;
+}
+
+export const choco: Choco = { pack, installAndUninstall, push };

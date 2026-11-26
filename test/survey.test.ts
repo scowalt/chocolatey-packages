@@ -1,55 +1,109 @@
 import { describe, expect, test } from "bun:test";
-import { classifyPush } from "../src/choco.ts";
-import { classify, renderTable, type Standing } from "../src/survey.ts";
+import type { Plan } from "../src/plan.ts";
+import { LEGEND, problemsIn, renderTable, standingOf, surveyPackage, type Standing, type Survey } from "../src/survey.ts";
+import { definitionOf } from "../src/registry.ts";
+import type { Outcome } from "../src/runner.ts";
+import { buildWorld } from "./world.ts";
 
-describe("classify", () => {
-  test("a nuspec behind upstream is behind, whatever the community feed holds", () => {
-    expect(classify("1.19.2", "1.19.7", "1.19.2")).toBe("behind");
-  });
+function survey(id: string, plan: Plan, nuspec = "1.0.0", latestApproved: string | null = "1.0.0"): Survey {
+  return { id, nuspec: { upstream: nuspec }, upstream: { version: "1.0.0", downloadUrl: "https://example.test" }, latestApproved, plan };
+}
 
-  test("a current nuspec the community feed lacks is unpublished", () => {
-    expect(classify("1.19.7", "1.19.7", "1.19.2")).toBe("unpublished");
-    expect(classify("1.19.7", "1.19.7", null)).toBe("unpublished");
-  });
+function ok(value: Survey): Outcome<Survey> {
+  return { id: value.id, ok: true, value };
+}
 
-  test("a feed holding upstream's version, or a dated fix of it, is current", () => {
-    expect(classify("3.0.1.20261126", "3.0.1", "3.0.1.20261126")).toBe("current");
-    expect(classify("1.19.7", "1.19.7", "1.19.7")).toBe("current");
+describe("standingOf", () => {
+  const cases: readonly [Plan, Standing][] = [
+    [{ kind: "approved", version: "1.0.0", rewrite: false }, "current"],
+    [{ kind: "moderation", version: "1.0.0", rewrite: false }, "moderation"],
+    [{ kind: "publish", version: "1.0.0", rewrite: false }, "unpublished"],
+    [{ kind: "publish", version: "1.0.1", rewrite: true }, "behind"],
+    [{ kind: "approved", version: "1.0.1", rewrite: true }, "behind"],
+    [{ kind: "moderation", version: "1.0.1", rewrite: true }, "behind"],
+    [{ kind: "rejected", version: "1.0.0", rewrite: false }, "rejected"],
+    [{ kind: "ahead", nuspec: "1.0.1", upstream: "1.0.0" }, "ahead"],
+  ];
+  for (const [plan, expected] of cases) {
+    test(`${plan.kind} is ${expected}`, () => {
+      expect(standingOf(plan)).toBe(expected);
+    });
+  }
+});
+
+describe("problemsIn", () => {
+  test("only current and waiting in moderation are healthy", () => {
+    const outcomes = [
+      ok(survey("a", { kind: "approved", version: "1.0.0", rewrite: false })),
+      ok(survey("b", { kind: "moderation", version: "1.0.0", rewrite: false })),
+      ok(survey("c", { kind: "publish", version: "1.0.0", rewrite: false })),
+      ok(survey("d", { kind: "publish", version: "1.0.1", rewrite: true })),
+      ok(survey("e", { kind: "ahead", nuspec: "1.0.1", upstream: "1.0.0" })),
+      ok(survey("f", { kind: "rejected", version: "1.0.0", rewrite: false })),
+      { id: "g", ok: false, message: "boom" } satisfies Outcome<Survey>,
+    ];
+    expect(problemsIn(outcomes)).toEqual([
+      "c: unpublished",
+      "d: behind",
+      "e: ahead",
+      "f: rejected",
+      "g: boom",
+    ]);
   });
 });
 
 describe("renderTable", () => {
   test("aligns one row per package under a header", () => {
-    const standings: Standing[] = [
-      { id: "a", nuspec: "1.0", community: "1.0", upstream: "1.0", state: "current", detail: "" },
-      { id: "long-id", nuspec: "1.0", community: null, upstream: null, state: "error", detail: "boom" },
-    ];
-    expect(renderTable(standings).split("\n")).toEqual([
+    const rows = renderTable([
+      ok(survey("a", { kind: "approved", version: "1.0.0", rewrite: false }, "1.0.0", "1.0.0")),
+      { id: "long-id", ok: false, message: "boom" },
+    ]);
+    expect(rows.split("\n")).toEqual([
       "package  nuspec  community  upstream  state",
       "-------  ------  ---------  --------  -----------",
-      "a        1.0     1.0        1.0       current",
-      "long-id  1.0     -          -         error: boom",
+      "a        1.0.0   1.0.0      1.0.0     current",
+      "long-id  -       -          -         error: boom",
     ]);
+  });
+
+  test("shows a fix version in full and a dash when nothing is approved", () => {
+    const row = renderTable([
+      ok({
+        ...survey("p", { kind: "publish", version: "3.0.1.20261126", rewrite: false }, "3.0.1", null),
+        nuspec: { upstream: "3.0.1", fixDate: "20261126" },
+      }),
+    ]).split("\n")[2];
+    expect(row).toBe("p        3.0.1.20261126  -          1.0.0     unpublished");
+  });
+
+  test("the legend names every state", () => {
+    for (const state of ["current", "moderation", "unpublished", "behind", "ahead", "rejected", "error"]) {
+      expect(LEGEND).toContain(state);
+    }
   });
 });
 
-describe("classifyPush", () => {
-  test("a zero exit code is a push", () => {
-    expect(classifyPush({ code: 0, output: "Your package was pushed" })).toBe("pushed");
+describe("surveyPackage", () => {
+  test("reads the nuspec, upstream and the exact version's feed status", async () => {
+    const { http } = buildWorld({
+      upstream: { cryptomator: "1.19.7" },
+      feed: { "cryptomator@1.19.7": "absent" },
+    });
+    const result = await surveyPackage(definitionOf("cryptomator"), http);
+    expect(result.nuspec).toEqual({ upstream: "1.19.2" });
+    expect(result.upstream.version).toBe("1.19.7");
+    expect(result.plan).toEqual({ kind: "publish", version: "1.19.7", rewrite: true });
   });
 
-  test("a conflict means the version is already on the feed", () => {
-    expect(
-      classifyPush({
-        code: 1,
-        output: "The remote server returned an error: (409) Conflict. The package already exists.",
-      }),
-    ).toBe("already-published");
+  test("a fix version in the nuspec is looked up as it is written", async () => {
+    const { http } = buildWorld({ feed: { "project64@3.0.1.20261126": "absent" } });
+    const result = await surveyPackage(definitionOf("project64"), http);
+    expect(result.nuspec).toEqual({ upstream: "3.0.1", fixDate: "20261126" });
+    expect(result.plan).toEqual({ kind: "publish", version: "3.0.1.20261126", rewrite: false });
   });
 
-  test("any other failure is a failure", () => {
-    expect(classifyPush({ code: 1, output: "The remote server returned an error: (403) Forbidden." })).toBe(
-      "failed",
-    );
+  test("a failing feed lookup fails the survey rather than reading as absent", async () => {
+    const { http } = buildWorld({ feedFailures: ["stepmania@5.0.12"] });
+    await expect(surveyPackage(definitionOf("stepmania"), http)).rejects.toThrow("503");
   });
 });

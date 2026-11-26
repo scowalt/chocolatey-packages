@@ -67,3 +67,9 @@ export const packages: readonly PackageDefinition[] = [
     },
   },
 ];
+
+export function definitionOf(id: string): PackageDefinition {
+  const found = packages.find((candidate) => candidate.id === id);
+  if (found === undefined) throw new Error(`Unknown package: ${id}`);
+  return found;
+}

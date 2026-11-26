@@ -1,30 +1,46 @@
 import { describe, expect, test } from "bun:test";
-import { compareVersions, isCurrent, newestVersion } from "../src/version.ts";
+import {
+  assertVersion,
+  compareVersions,
+  newestVersion,
+  parseNuspecVersion,
+  versionText,
+} from "../src/version.ts";
 
-describe("isCurrent", () => {
-  test("a nuspec equal to upstream is current", () => {
-    expect(isCurrent("1.19.7", "1.19.7")).toBe(true);
+describe("parseNuspecVersion", () => {
+  test("a plain version is an upstream version", () => {
+    expect(parseNuspecVersion("1.19.7")).toEqual({ upstream: "1.19.7" });
+    expect(parseNuspecVersion("6.3.5.94")).toEqual({ upstream: "6.3.5.94" });
   });
 
-  test("upstream plus an eight digit date is a package fix of that release", () => {
-    expect(isCurrent("3.0.1.20261126", "3.0.1")).toBe(true);
+  test("three segments plus an eight digit date is a fix of that upstream version", () => {
+    expect(parseNuspecVersion("3.0.1.20261126")).toEqual({ upstream: "3.0.1", fixDate: "20261126" });
   });
 
-  test("an older release is behind", () => {
-    expect(isCurrent("1.19.2", "1.19.7")).toBe(false);
+  test("a fourth segment that is not eight digits belongs to the upstream version", () => {
+    expect(parseNuspecVersion("3.0.1.211012")).toEqual({ upstream: "3.0.1.211012" });
   });
 
-  test("a fix of an older release is behind the newer release", () => {
-    expect(isCurrent("3.0.1.20261126", "3.0.2")).toBe(false);
+  test("text round trips", () => {
+    for (const text of ["1.19.7", "6.3.5.94", "3.0.1.20261126"]) {
+      expect(versionText(parseNuspecVersion(text))).toBe(text);
+    }
   });
 
-  test("a different suffix is not a date fix", () => {
-    expect(isCurrent("3.0.1.211012", "3.0.1")).toBe(false);
-    expect(isCurrent("3.0.1.5", "3.0.1")).toBe(false);
+  test("rejects what NuGet will not accept", () => {
+    for (const text of ["6.3.5.94.20261126", "1.0.0-beta", "1..0", "", "v1.0", "1.0.0.0.0", "1.2147483648"]) {
+      expect(() => parseNuspecVersion(text)).toThrow();
+    }
+  });
+});
+
+describe("assertVersion", () => {
+  test("returns a valid version unchanged", () => {
+    expect(assertVersion("5.0.12")).toBe("5.0.12");
   });
 
-  test("a prefix of a longer segment is not current", () => {
-    expect(isCurrent("1.19.70", "1.19.7")).toBe(false);
+  test("rejects a version with more than four segments", () => {
+    expect(() => assertVersion("1.2.3.4.5")).toThrow("at most 4");
   });
 });
 
@@ -33,6 +49,10 @@ describe("compareVersions", () => {
     expect(compareVersions("1.19.10", "1.19.9")).toBeGreaterThan(0);
     expect(compareVersions("6.3.5.94", "6.3.5.94")).toBe(0);
     expect(compareVersions("3.0.1", "3.0.1.20261126")).toBeLessThan(0);
+  });
+
+  test("a missing segment counts as zero", () => {
+    expect(compareVersions("1.0", "1.0.0")).toBe(0);
   });
 
   test("rejects text that is not a numeric version", () => {

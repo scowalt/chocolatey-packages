@@ -1,85 +1,88 @@
-import { latestApprovedVersion } from "./community.ts";
+import { feedStatusOf, latestApprovedVersion, type FeedStatus } from "./community.ts";
 import type { Http } from "./http.ts";
-import { readPackage, nuspecVersion } from "./package-files.ts";
+import { PACKAGES_DIR, nuspecVersion, readPackage } from "./package-files.ts";
+import { plan, versionsToLookUp, type Plan } from "./plan.ts";
 import type { PackageDefinition } from "./registry.ts";
+import type { Outcome } from "./runner.ts";
 import { findLatest, type Release } from "./upstream.ts";
-import { isCurrent } from "./version.ts";
+import { versionText, type NuspecVersion } from "./version.ts";
 
-export type PackageState = "current" | "unpublished" | "behind" | "error";
-
-export interface Standing {
+export interface Survey {
   readonly id: string;
-  readonly nuspec: string;
-  readonly community: string | null;
-  readonly upstream: string | null;
-  readonly state: PackageState;
-  readonly detail: string;
+  readonly nuspec: NuspecVersion;
+  readonly upstream: Release;
+  readonly latestApproved: string | null;
+  readonly plan: Plan;
 }
 
-export function classify(
-  nuspec: string,
-  upstream: string,
-  community: string | null,
-): Exclude<PackageState, "error"> {
-  if (!isCurrent(nuspec, upstream)) return "behind";
-  if (community !== null && isCurrent(community, upstream)) return "current";
-  return "unpublished";
-}
-
-function describe(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
-
-export async function lookUpstream(
+export async function surveyPackage(
   definition: PackageDefinition,
   http: Http,
-): Promise<Release | Error> {
-  try {
-    return await findLatest(definition.upstream, http);
-  } catch (error) {
-    return new Error(describe(error));
-  }
-}
-
-export async function standingOf(definition: PackageDefinition, http: Http): Promise<Standing> {
-  const nuspec = nuspecVersion(readPackage(definition.id).nuspec);
-  const [release, community] = await Promise.all([
-    lookUpstream(definition, http),
-    latestApprovedVersion(definition.id, http).catch((error: unknown) => new Error(describe(error))),
+  dir: string = PACKAGES_DIR,
+): Promise<Survey> {
+  const nuspec = nuspecVersion(readPackage(definition.id, dir).nuspec);
+  const upstream = await findLatest(definition.upstream, http);
+  const [latestApproved, ...statuses] = await Promise.all([
+    latestApprovedVersion(definition.id, http),
+    ...versionsToLookUp(nuspec, upstream.version).map(async (version) => {
+      const status: FeedStatus = await feedStatusOf(definition.id, version, http);
+      return [version, status] as const;
+    }),
   ]);
-  if (release instanceof Error) {
-    return { id: definition.id, nuspec, community: null, upstream: null, state: "error", detail: release.message };
-  }
-  if (community instanceof Error) {
-    return {
-      id: definition.id,
-      nuspec,
-      community: null,
-      upstream: release.version,
-      state: "error",
-      detail: `community feed: ${community.message}`,
-    };
-  }
   return {
     id: definition.id,
     nuspec,
-    community,
-    upstream: release.version,
-    state: classify(nuspec, release.version, community),
-    detail: "",
+    upstream,
+    latestApproved,
+    plan: plan(nuspec, upstream.version, Object.fromEntries(statuses)),
   };
+}
+
+export type Standing = "current" | "moderation" | "unpublished" | "behind" | "ahead" | "rejected";
+
+export function standingOf(decision: Plan): Standing {
+  if (decision.kind === "ahead" || decision.kind === "rejected") return decision.kind;
+  if (decision.rewrite) return "behind";
+  if (decision.kind === "publish") return "unpublished";
+  return decision.kind === "moderation" ? "moderation" : "current";
+}
+
+export const LEGEND = [
+  "current      the nuspec is at upstream's version and Chocolatey has approved it",
+  "moderation   the nuspec is at upstream's version and Chocolatey holds it in moderation",
+  "unpublished  the nuspec is at upstream's version and Chocolatey has no such version; the next daily run pushes it",
+  "behind       upstream is newer than the nuspec; the next daily run rewrites the package",
+  "ahead        the nuspec is newer than upstream; the updater never rewrites downward",
+  "rejected     Chocolatey rejected the nuspec's version; publish a fix version",
+  "error        upstream or the Chocolatey feed could not be read",
+].join("\n");
+
+const HEALTHY: readonly Standing[] = ["current", "moderation"];
+
+export function problemsIn(outcomes: readonly Outcome<Survey>[]): string[] {
+  return outcomes.flatMap((outcome) => {
+    if (!outcome.ok) return [`${outcome.id}: ${outcome.message}`];
+    const standing = standingOf(outcome.value.plan);
+    return HEALTHY.includes(standing) ? [] : [`${outcome.id}: ${standing}`];
+  });
 }
 
 const COLUMNS = ["package", "nuspec", "community", "upstream", "state"] as const;
 
-export function renderTable(standings: readonly Standing[]): string {
-  const rows = standings.map((standing) => [
-    standing.id,
-    standing.nuspec,
-    standing.community ?? "-",
-    standing.upstream ?? "-",
-    standing.detail === "" ? standing.state : `${standing.state}: ${standing.detail}`,
-  ]);
+function rowOf(outcome: Outcome<Survey>): string[] {
+  if (!outcome.ok) return [outcome.id, "-", "-", "-", `error: ${outcome.message}`];
+  const survey = outcome.value;
+  return [
+    survey.id,
+    versionText(survey.nuspec),
+    survey.latestApproved ?? "-",
+    survey.upstream.version,
+    standingOf(survey.plan),
+  ];
+}
+
+export function renderTable(outcomes: readonly Outcome<Survey>[]): string {
+  const rows = outcomes.map(rowOf);
   const widths = COLUMNS.map((name, column) =>
     Math.max(name.length, ...rows.map((row) => row[column]?.length ?? 0)),
   );

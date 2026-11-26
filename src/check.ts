@@ -1,15 +1,18 @@
-import { http } from "./http.ts";
-import { packages } from "./registry.ts";
-import { renderTable, standingOf } from "./survey.ts";
+import type { Http } from "./http.ts";
+import { PACKAGES_DIR } from "./package-files.ts";
+import { definitionOf, packages } from "./registry.ts";
+import { allPackages } from "./runner.ts";
+import { LEGEND, problemsIn, renderTable, surveyPackage } from "./survey.ts";
 
-const standings = await Promise.all(packages.map((definition) => standingOf(definition, http)));
+export interface CheckResult {
+  readonly report: string;
+  readonly problems: readonly string[];
+}
 
-console.log(renderTable(standings));
-console.log();
-console.log("current      the community feed already has upstream's newest version");
-console.log("unpublished  the nuspec is current; the community feed is waiting on a push or moderation");
-console.log("behind       upstream has a newer version than the nuspec; run the daily update");
-console.log("error        upstream or the community feed could not be read");
-
-const failing = standings.filter((standing) => standing.state === "behind" || standing.state === "error");
-process.exit(failing.length === 0 ? 0 : 1);
+export async function checkPackages(http: Http, dir: string = PACKAGES_DIR): Promise<CheckResult> {
+  const outcomes = await allPackages(
+    packages.map((definition) => definition.id),
+    (id) => surveyPackage(definitionOf(id), http, dir),
+  );
+  return { report: `${renderTable(outcomes)}\n\n${LEGEND}`, problems: problemsIn(outcomes) };
+}
