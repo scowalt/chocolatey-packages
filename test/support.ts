@@ -2,7 +2,8 @@ import { cpSync, mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { HttpStatusError, type Http, type RequestHeaders } from "../src/http.ts";
-import { PACKAGES_DIR } from "../src/package-files.ts";
+
+export const PACKAGES_FIXTURE = join(import.meta.dir, "fixtures", "packages");
 
 export function fixture(name: string): string {
   return readFileSync(join(import.meta.dir, "fixtures", name), "utf8");
@@ -45,7 +46,7 @@ export function fakeHttp(
 
 export function copyOfPackages(): string {
   const directory = mkdtempSync(join(tmpdir(), "packages-"));
-  cpSync(PACKAGES_DIR, directory, { recursive: true });
+  cpSync(PACKAGES_FIXTURE, directory, { recursive: true });
   return directory;
 }
 

@@ -18,6 +18,8 @@ Chocolatey packages for scowalt, kept current by one daily GitHub Actions job. R
   those functions.
 - `src/runner.ts`: the one "for each package, log group, run, collect failures" loop.
 - `test/`: behavior tests with saved fixtures in `test/fixtures/`. They never touch the network.
+  `test/fixtures/packages/` is a frozen copy of `packages/` that the behavior tests read, so the daily
+  run's version rewrites never change what they see. Only `test/registry.test.ts` reads `packages/`.
 - `.github/workflows/`: `ci.yml` and `update.yml`.
 
 ## Commands

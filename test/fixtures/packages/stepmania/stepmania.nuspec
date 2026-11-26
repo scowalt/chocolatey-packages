@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>stepmania</id>
+    <version>5.0.12</version>
+    <packageSourceUrl>https://github.com/scowalt/chocolatey-packages/tree/master/packages/stepmania</packageSourceUrl>
+    <owners>scowalt</owners>
+
+    <title>StepMania</title>
+    <projectUrl>https://www.stepmania.com/</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/stepmania/stepmania/master/icons/hicolor/128x128/apps/stepmania-ssc.png</iconUrl>
+    <authors>Chris Danford, the StepMania development team</authors>
+    <copyright>Chris Danford, the StepMania development team, et al.</copyright>
+    <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/stepmania/stepmania</projectSourceUrl>
+    <docsUrl>https://github.com/stepmania/stepmania/wiki</docsUrl>
+    <bugTrackerUrl>https://github.com/stepmania/stepmania/issues</bugTrackerUrl>
+    <tags>stepmania admin</tags>
+    <summary>StepMania is an advanced cross-platform rhythm game for home and arcade use.</summary>
+    <description>StepMania is a free dance and rhythm game for Windows, Mac, and Linux. It features 3D graphics, keyboard and "dance pad" support, and an editor for creating your own steps.</description>
+    <releaseNotes>https://github.com/stepmania/stepmania/releases</releaseNotes>
+    <dependencies>
+      <dependency id="vcredist2015" version="14.0.24215" />
+      <dependency id="directx" version="9.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

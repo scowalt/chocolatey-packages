@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { checkPackages, renderTable, type CheckRow } from "../src/check.ts";
 import type { Plan } from "../src/plan.ts";
 import type { Outcome } from "../src/runner.ts";
+import { PACKAGES_FIXTURE } from "./support.ts";
 import { buildWorld } from "./world.ts";
 
 function row(id: string, plan: Plan, nuspec = "1.0.0", latestApproved: string | null = "1.0.0"): CheckRow {
@@ -21,7 +22,7 @@ function ok(value: CheckRow): Outcome<CheckRow> {
 describe("checkPackages", () => {
   test("all seven packages current and approved is healthy", async () => {
     const { http } = buildWorld();
-    const { report, problems } = await checkPackages(http);
+    const { report, problems } = await checkPackages(http, PACKAGES_FIXTURE);
     expect(problems).toEqual([]);
     expect(report.split("\n").filter((line) => line.endsWith("current"))).toHaveLength(7);
   });
@@ -38,7 +39,7 @@ describe("checkPackages", () => {
       },
       feedFailures: ["depressurizer@5.3.0"],
     });
-    const { report, problems } = await checkPackages(http);
+    const { report, problems } = await checkPackages(http, PACKAGES_FIXTURE);
     expect(problems).toEqual([
       "cryptomator: behind",
       "depressurizer: GET https://community.chocolatey.org/api/v2/Packages(Id='depressurizer',Version='5.3.0') returned 503",
@@ -52,13 +53,13 @@ describe("checkPackages", () => {
 
   test("a nuspec newer than upstream is reported as ahead", async () => {
     const { http } = buildWorld({ upstream: { depressurizer: "5.2.9" } });
-    const { problems } = await checkPackages(http);
+    const { problems } = await checkPackages(http, PACKAGES_FIXTURE);
     expect(problems).toEqual(["depressurizer: ahead"]);
   });
 
   test("the community column shows the newest approved version, and a failing listing is an error row", async () => {
     const { http } = buildWorld({ listingFails: true });
-    const { report, problems } = await checkPackages(http);
+    const { report, problems } = await checkPackages(http, PACKAGES_FIXTURE);
     expect(problems).toHaveLength(7);
     expect(report).toContain("error: GET https://community.chocolatey.org/api/v2/FindPackagesById()");
   });

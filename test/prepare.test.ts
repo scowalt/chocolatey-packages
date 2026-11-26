@@ -7,7 +7,7 @@ import { installPackages, planPackages } from "../src/prepare.ts";
 import { packages } from "../src/registry.ts";
 import { loadReport } from "../src/report.ts";
 import { verifyPackages } from "../src/verify.ts";
-import { copyOfPackages, fakeChoco } from "./support.ts";
+import { PACKAGES_FIXTURE, copyOfPackages, fakeChoco } from "./support.ts";
 import { buildWorld } from "./world.ts";
 
 const ALL = packages.map((definition) => definition.id);
@@ -39,7 +39,7 @@ describe("planPackages", () => {
     expect(problems).toEqual([]);
     expect(readPackage("cryptomator", dir).nuspec).toContain("<version>1.19.7</version>");
     for (const id of ALL.filter((candidate) => candidate !== "cryptomator")) {
-      expect(readPackage(id, dir)).toEqual(readPackage(id));
+      expect(readPackage(id, dir)).toEqual(readPackage(id, PACKAGES_FIXTURE));
     }
   });
 
