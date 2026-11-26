@@ -1,17 +1,16 @@
 import type { Choco, PushOutcome } from "./choco.ts";
-import { derivePackage, type Derived } from "./derive.ts";
+import { deriveAll, type Derived } from "./derive.ts";
 import type { Git } from "./git.ts";
 import type { Http } from "./http.ts";
 import { PACKAGES_DIR, writePackage } from "./package-files.ts";
-import type { Actionable } from "./plan.ts";
-import { definitionOf, packages } from "./registry.ts";
+import { onFeed, type Plan } from "./plan.ts";
 import type { PrepareEntry } from "./report.ts";
 import { errorMessage, failures, forEachPackage, values, type Outcome } from "./runner.ts";
 
 export type PushGate = { readonly push: true } | { readonly push: false; readonly reason: string };
 
 export function pushGate(
-  derived: { readonly plan: Actionable; readonly hash: string },
+  derived: { readonly plan: Plan; readonly hash: string },
   reported: PrepareEntry | undefined,
 ): PushGate {
   if (derived.plan.kind !== "publish") return { push: false, reason: `nothing to publish (${derived.plan.kind})` };
@@ -27,22 +26,14 @@ export type PushResult = PushOutcome | "not-attempted";
 
 export interface PublishItem {
   readonly id: string;
-  readonly plan: Actionable;
+  readonly plan: Plan;
   readonly push: PushResult;
 }
 
-function isOnFeed(item: PublishItem): boolean {
-  switch (item.plan.kind) {
-    case "approved":
-    case "moderation":
-      return true;
-    case "publish":
-      return item.push === "pushed" || item.push === "already-published";
-  }
-}
-
 export function selectCommits(items: readonly PublishItem[]): string[] {
-  return items.filter((item) => item.plan.rewrite && isOnFeed(item)).map((item) => item.id);
+  return items
+    .filter(({ plan, push }) => plan.rewrite && (onFeed(plan) || push === "pushed" || push === "already-published"))
+    .map((item) => item.id);
 }
 
 export interface PublishDeps {
@@ -65,11 +56,7 @@ export async function publishPackages(
   deps: PublishDeps,
 ): Promise<string[]> {
   const dir = deps.dir ?? PACKAGES_DIR;
-  const derivations = await forEachPackage(
-    packages.map((definition) => definition.id),
-    "derive",
-    (id) => derivePackage(definitionOf(id), deps.http, dir),
-  );
+  const derivations = await deriveAll(deps.http, dir);
   const derived = values(derivations);
   const reported = new Map(prepared.map((entry) => [entry.id, entry]));
   const gates = derived.map((item) => ({ item, gate: pushGate(item, reported.get(item.id)) }));

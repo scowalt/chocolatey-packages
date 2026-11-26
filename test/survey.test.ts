@@ -35,7 +35,7 @@ describe("surveyPackage", () => {
   test("makes no feed request when the nuspec is ahead of upstream", async () => {
     const { http } = buildWorld({ upstream: { cryptomator: "1.19.1" } });
     const result = await surveyPackage(definitionOf("cryptomator"), http);
-    expect(result.plan).toEqual({ kind: "ahead", nuspec: "1.19.2", upstream: "1.19.1" });
+    expect(result.plan).toEqual({ kind: "ahead", version: "1.19.2", upstream: "1.19.1", rewrite: false });
     expect(feedRequests(http.requests)).toEqual([]);
   });
 

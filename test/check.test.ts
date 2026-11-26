@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { checkPackages, problemsIn, renderTable, type CheckRow } from "../src/check.ts";
+import { checkPackages, renderTable, type CheckRow } from "../src/check.ts";
 import type { Plan } from "../src/plan.ts";
 import type { Outcome } from "../src/runner.ts";
 import { buildWorld } from "./world.ts";
@@ -61,27 +61,6 @@ describe("checkPackages", () => {
     const { report, problems } = await checkPackages(http);
     expect(problems).toHaveLength(7);
     expect(report).toContain("error: GET https://community.chocolatey.org/api/v2/FindPackagesById()");
-  });
-});
-
-describe("problemsIn", () => {
-  test("only current and waiting in moderation are healthy", () => {
-    const outcomes = [
-      ok(row("a", { kind: "approved", version: "1.0.0", rewrite: false })),
-      ok(row("b", { kind: "moderation", version: "1.0.0", rewrite: false })),
-      ok(row("c", { kind: "publish", version: "1.0.0", rewrite: false })),
-      ok(row("d", { kind: "publish", version: "1.0.1", rewrite: true })),
-      ok(row("e", { kind: "ahead", nuspec: "1.0.1", upstream: "1.0.0" })),
-      ok(row("f", { kind: "rejected", version: "1.0.0", rewrite: false })),
-      { id: "g", ok: false, message: "boom" } satisfies Outcome<CheckRow>,
-    ];
-    expect(problemsIn(outcomes)).toEqual([
-      "c: unpublished",
-      "d: behind",
-      "e: ahead",
-      "f: rejected",
-      "g: boom",
-    ]);
   });
 });
 

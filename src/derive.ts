@@ -7,14 +7,14 @@ import {
   writePackage,
   type FilePair,
 } from "./package-files.ts";
-import { actionable, type Actionable } from "./plan.ts";
-import type { PackageDefinition } from "./registry.ts";
-import { surveyPackage, type Survey } from "./survey.ts";
+import { problemOf, type Plan } from "./plan.ts";
+import { definitionOf, packages, type PackageDefinition } from "./registry.ts";
+import { forEachPackage, type Outcome } from "./runner.ts";
+import { surveyPackage } from "./survey.ts";
 
 export interface Derived {
   readonly id: string;
-  readonly survey: Survey;
-  readonly plan: Actionable;
+  readonly plan: Plan;
   readonly hash: string;
   readonly original: FilePair;
 }
@@ -25,7 +25,7 @@ export async function derivePackage(
   dir: string = PACKAGES_DIR,
 ): Promise<Derived> {
   const survey = await surveyPackage(definition, http, dir);
-  const decision = actionable(survey.plan);
+  const decision = survey.plan;
   const original = readPackage(definition.id, dir);
   if (decision.rewrite) {
     const checksum = await http.sha256(survey.upstream.downloadUrl);
@@ -40,5 +40,14 @@ export async function derivePackage(
     );
     console.log(`${definition.id}: ${decision.version} (${checksum})`);
   }
-  return { id: definition.id, survey, plan: decision, hash: hashPackage(definition.id, dir), original };
+  return { id: definition.id, plan: decision, hash: hashPackage(definition.id, dir), original };
+}
+
+export function deriveAll(http: Http, dir: string = PACKAGES_DIR): Promise<Outcome<Derived>[]> {
+  return forEachPackage(
+    packages.map((definition) => definition.id),
+    "derive",
+    (id) => derivePackage(definitionOf(id), http, dir),
+    (derived) => problemOf(derived.plan),
+  );
 }

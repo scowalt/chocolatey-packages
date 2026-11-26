@@ -5,14 +5,14 @@ import { join } from "node:path";
 import type { PushOutcome } from "../src/choco.ts";
 import type { Git } from "../src/git.ts";
 import { readPackage } from "../src/package-files.ts";
-import type { Actionable } from "../src/plan.ts";
+import type { Decided, Plan } from "../src/plan.ts";
 import { installPackages, planPackages } from "../src/prepare.ts";
 import { pushGate, publishPackages, selectCommits, type PublishItem } from "../src/publish.ts";
 import { loadReport, type PrepareEntry } from "../src/report.ts";
 import { copyOfPackages, fakeChoco } from "./support.ts";
 import { buildWorld, type WorldOptions } from "./world.ts";
 
-const publishPlan: Actionable = { kind: "publish", version: "1.0.0", rewrite: false };
+const publishPlan: Plan = { kind: "publish", version: "1.0.0", rewrite: false };
 
 function entry(overrides: Partial<PrepareEntry> = {}): PrepareEntry {
   return { id: "demo", hash: "h", installed: true, ...overrides };
@@ -25,7 +25,7 @@ describe("pushGate", () => {
 
   test("does not push when the plan is not publish", () => {
     for (const kind of ["approved", "moderation"] as const) {
-      const plan: Actionable = { kind, version: "1.0.0", rewrite: false };
+      const plan: Plan = { kind, version: "1.0.0", rewrite: false };
       expect(pushGate({ plan, hash: "h" }, entry()).push).toBe(false);
     }
   });
@@ -50,12 +50,12 @@ describe("pushGate", () => {
 });
 
 describe("selectCommits", () => {
-  const item = (id: string, plan: Actionable, push: PublishItem["push"] = "not-attempted"): PublishItem => ({
+  const item = (id: string, plan: Plan, push: PublishItem["push"] = "not-attempted"): PublishItem => ({
     id,
     plan,
     push,
   });
-  const rewrite = (kind: Actionable["kind"]): Actionable => ({ kind, version: "2.0.0", rewrite: true });
+  const rewrite = (kind: Decided["kind"]): Plan => ({ kind, version: "2.0.0", rewrite: true });
 
   test("commits a rewrite that was just pushed or answered with a conflict", () => {
     expect(

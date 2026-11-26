@@ -50,7 +50,7 @@ describe("targetOf", () => {
   });
 
   test("an upstream older than the nuspec is ahead and nothing is rewritten", () => {
-    expect(target("1.19.8", "1.19.7")).toEqual({ kind: "ahead", nuspec: "1.19.8", upstream: "1.19.7" });
+    expect(target("1.19.8", "1.19.7")).toEqual({ kind: "ahead", version: "1.19.8", upstream: "1.19.7", rewrite: false });
   });
 });
 
@@ -81,6 +81,10 @@ describe("plan", () => {
 
   test("a newer upstream rewrites to upstream's version and publishes it", () => {
     expect(planFor("1.19.2", "1.19.7", "absent")).toEqual({ kind: "publish", version: "1.19.7", rewrite: true });
+  });
+
+  test("a rejected version is never rewritten to, even when upstream is newer", () => {
+    expect(planFor("1.19.2", "1.19.7", "rejected")).toEqual({ kind: "rejected", version: "1.19.7", rewrite: false });
   });
 
   test("after a crash between push and commit the files are rewritten again and nothing is pushed", () => {

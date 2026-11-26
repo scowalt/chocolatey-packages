@@ -14,9 +14,15 @@ export function endGroup(): void {
   if (process.env.GITHUB_ACTIONS) console.log("::endgroup::");
 }
 
-async function attempt<T>(id: string, step: (id: string) => Promise<T>): Promise<Outcome<T>> {
+export async function attempt<T>(
+  id: string,
+  step: (id: string) => Promise<T>,
+  refusal: (value: T) => string | undefined = () => undefined,
+): Promise<Outcome<T>> {
   try {
-    return { id, ok: true, value: await step(id) };
+    const value = await step(id);
+    const refused = refusal(value);
+    return refused === undefined ? { id, ok: true, value } : { id, ok: false, message: refused };
   } catch (error) {
     return { id, ok: false, message: errorMessage(error) };
   }
@@ -26,23 +32,17 @@ export async function forEachPackage<T>(
   ids: readonly string[],
   title: string,
   step: (id: string) => Promise<T>,
+  refusal?: (value: T) => string | undefined,
 ): Promise<Outcome<T>[]> {
   const outcomes: Outcome<T>[] = [];
   for (const id of ids) {
     group(`${title} ${id}`);
-    const outcome = await attempt(id, step);
+    const outcome = await attempt(id, step, refusal);
     if (!outcome.ok) console.error(`${id}: ${outcome.message}`);
     outcomes.push(outcome);
     endGroup();
   }
   return outcomes;
-}
-
-export function allPackages<T>(
-  ids: readonly string[],
-  step: (id: string) => Promise<T>,
-): Promise<Outcome<T>[]> {
-  return Promise.all(ids.map((id) => attempt(id, step)));
 }
 
 export function values<T>(outcomes: readonly Outcome<T>[]): T[] {

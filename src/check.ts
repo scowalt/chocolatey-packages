@@ -1,23 +1,14 @@
 import { latestApprovedVersion } from "./community.ts";
 import type { Http } from "./http.ts";
 import { PACKAGES_DIR } from "./package-files.ts";
-import type { Plan } from "./plan.ts";
+import { onFeed, standingOf } from "./plan.ts";
 import { definitionOf, packages } from "./registry.ts";
-import { allPackages, type Outcome } from "./runner.ts";
+import { attempt, type Outcome } from "./runner.ts";
 import { surveyPackage, type Survey } from "./survey.ts";
 import { versionText } from "./version.ts";
 
 export interface CheckRow extends Survey {
   readonly latestApproved: string | null;
-}
-
-export type Standing = "current" | "moderation" | "unpublished" | "behind" | "ahead" | "rejected";
-
-export function standingOf(decision: Plan): Standing {
-  if (decision.kind === "ahead" || decision.kind === "rejected") return decision.kind;
-  if (decision.rewrite) return "behind";
-  if (decision.kind === "publish") return "unpublished";
-  return decision.kind === "moderation" ? "moderation" : "current";
 }
 
 export const LEGEND = [
@@ -30,13 +21,11 @@ export const LEGEND = [
   "error        upstream or the Chocolatey feed could not be read",
 ].join("\n");
 
-const HEALTHY: readonly Standing[] = ["current", "moderation"];
-
-export function problemsIn(outcomes: readonly Outcome<CheckRow>[]): string[] {
+function problemsIn(outcomes: readonly Outcome<CheckRow>[]): string[] {
   return outcomes.flatMap((outcome) => {
     if (!outcome.ok) return [`${outcome.id}: ${outcome.message}`];
-    const standing = standingOf(outcome.value.plan);
-    return HEALTHY.includes(standing) ? [] : [`${outcome.id}: ${standing}`];
+    const { plan } = outcome.value;
+    return onFeed(plan) && !plan.rewrite ? [] : [`${outcome.id}: ${standingOf(plan)}`];
   });
 }
 
@@ -64,16 +53,16 @@ export interface CheckResult {
 }
 
 export async function checkPackages(http: Http, dir: string = PACKAGES_DIR): Promise<CheckResult> {
-  const outcomes = await allPackages(
-    packages.map((definition) => definition.id),
-    async (id) => {
-      const definition = definitionOf(id);
-      const [survey, latestApproved] = await Promise.all([
-        surveyPackage(definition, http, dir),
-        latestApprovedVersion(id, http),
-      ]);
-      return { ...survey, latestApproved };
-    },
+  const outcomes = await Promise.all(
+    packages.map(({ id }) =>
+      attempt(id, async () => {
+        const [survey, latestApproved] = await Promise.all([
+          surveyPackage(definitionOf(id), http, dir),
+          latestApprovedVersion(id, http),
+        ]);
+        return { ...survey, latestApproved };
+      }),
+    ),
   );
   return { report: `${renderTable(outcomes)}\n\n${LEGEND}`, problems: problemsIn(outcomes) };
 }

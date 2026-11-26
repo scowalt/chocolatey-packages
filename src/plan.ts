@@ -1,12 +1,12 @@
 import type { FeedStatus } from "./community.ts";
 import { compareVersions, versionText, type NuspecVersion } from "./version.ts";
 
-export type Plan =
-  | { readonly kind: "ahead"; readonly nuspec: string; readonly upstream: string }
-  | { readonly kind: "rejected"; readonly version: string; readonly rewrite: boolean }
-  | { readonly kind: "moderation"; readonly version: string; readonly rewrite: boolean }
-  | { readonly kind: "approved"; readonly version: string; readonly rewrite: boolean }
-  | { readonly kind: "publish"; readonly version: string; readonly rewrite: boolean };
+export interface Ahead {
+  readonly kind: "ahead";
+  readonly version: string;
+  readonly upstream: string;
+  readonly rewrite: false;
+}
 
 export interface Target {
   readonly kind: "target";
@@ -14,19 +14,27 @@ export interface Target {
   readonly rewrite: boolean;
 }
 
-export type Ahead = Extract<Plan, { kind: "ahead" }>;
+export interface Decided {
+  readonly kind: "approved" | "moderation" | "publish" | "rejected";
+  readonly version: string;
+  readonly rewrite: boolean;
+}
+
+export type Plan = Ahead | Decided;
+
+export type Standing = "current" | "moderation" | "unpublished" | "behind" | "ahead" | "rejected";
 
 export function targetOf(nuspec: NuspecVersion, upstream: string): Ahead | Target {
   const current = versionText(nuspec);
   if (current === upstream) return { kind: "target", version: current, rewrite: false };
   const order = compareVersions(upstream, nuspec.upstream);
-  if (order < 0) return { kind: "ahead", nuspec: current, upstream };
+  if (order < 0) return { kind: "ahead", version: current, upstream, rewrite: false };
   return order === 0
     ? { kind: "target", version: current, rewrite: false }
     : { kind: "target", version: upstream, rewrite: true };
 }
 
-export function plan(target: Target, status: FeedStatus): Exclude<Plan, Ahead> {
+export function plan(target: Target, status: FeedStatus): Decided {
   const { version, rewrite } = target;
   switch (status) {
     case "approved":
@@ -34,33 +42,35 @@ export function plan(target: Target, status: FeedStatus): Exclude<Plan, Ahead> {
     case "submitted":
       return { kind: "moderation", version, rewrite };
     case "rejected":
-      return { kind: "rejected", version, rewrite };
+      return { kind: "rejected", version, rewrite: false };
     case "absent":
       return { kind: "publish", version, rewrite };
   }
 }
 
-export type Actionable = Exclude<Plan, { kind: "ahead" | "rejected" }>;
+export function onFeed(decision: Plan): boolean {
+  return decision.kind === "approved" || decision.kind === "moderation";
+}
 
-export function actionable(decision: Plan): Actionable {
+export function standingOf(decision: Plan): Standing {
+  if (decision.rewrite) return "behind";
   switch (decision.kind) {
-    case "ahead":
-      throw new Error(
-        `the nuspec's ${decision.nuspec} is newer than upstream's ${decision.upstream}; nothing is rewritten downward`,
-      );
-    case "rejected":
-      throw new Error(
-        `${decision.version} was rejected by Chocolatey moderation; publish a fix version`,
-      );
+    case "approved":
+      return "current";
+    case "publish":
+      return "unpublished";
     default:
-      return decision;
+      return decision.kind;
   }
 }
 
-export function samePlan(a: Plan, b: Plan): boolean {
-  if (a.kind === "ahead") {
-    return b.kind === "ahead" && a.nuspec === b.nuspec && a.upstream === b.upstream;
+export function problemOf(decision: Plan): string | undefined {
+  switch (decision.kind) {
+    case "ahead":
+      return `the nuspec's ${decision.version} is newer than upstream's ${decision.upstream}; nothing is rewritten downward`;
+    case "rejected":
+      return `${decision.version} was rejected by Chocolatey moderation; publish a fix version`;
+    default:
+      return undefined;
   }
-  if (b.kind === "ahead") return false;
-  return a.kind === b.kind && a.version === b.version && a.rewrite === b.rewrite;
 }

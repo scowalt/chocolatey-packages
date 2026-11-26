@@ -1,20 +1,15 @@
 import { writeFileSync } from "node:fs";
 import type { Choco } from "./choco.ts";
-import { derivePackage } from "./derive.ts";
+import { deriveAll } from "./derive.ts";
 import type { Http } from "./http.ts";
 import { PACKAGES_DIR, hashPackage } from "./package-files.ts";
-import { definitionOf, packages } from "./registry.ts";
+import { packages } from "./registry.ts";
 import { serializeReport } from "./report.ts";
-import { failures, forEachPackage } from "./runner.ts";
+import { failures } from "./runner.ts";
 import { verifyPackages } from "./verify.ts";
 
 export async function planPackages(http: Http, dir: string = PACKAGES_DIR): Promise<string[]> {
-  const outcomes = await forEachPackage(
-    packages.map((definition) => definition.id),
-    "plan",
-    (id) => derivePackage(definitionOf(id), http, dir),
-  );
-  return failures(outcomes);
+  return failures(await deriveAll(http, dir));
 }
 
 export async function installPackages(
