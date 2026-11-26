@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo=scowalt/chocolatey-packages
+max_age_hours=36
+failures=()
+
+latest_run=$(gh run list --repo "$repo" --workflow update.yml --branch master --status completed --limit 1 \
+  --json conclusion,createdAt,url \
+  --jq 'if length == 0 then "none\t0\t-" else .[0] | "\(.conclusion)\t\(((now - (.createdAt | fromdateiso8601)) / 3600) | floor)\t\(.url)" end')
+IFS=$'\t' read -r conclusion age_hours url <<<"$latest_run"
+
+if [ "$conclusion" != success ]; then
+  failures+=("the latest completed update.yml run on master ended in '$conclusion': $url")
+fi
+if [ "$age_hours" -ge "$max_age_hours" ]; then
+  failures+=("no update.yml run on master has completed in the last $max_age_hours hours; the latest is $url")
+fi
+
+check_status=0
+table=$(GITHUB_TOKEN="${GITHUB_TOKEN:-$(gh auth token)}" bun run --silent check) || check_status=$?
+printf '%s\n\n' "$table"
+if [ "$check_status" -gt 1 ]; then
+  failures+=("bun run check exited $check_status")
+fi
+
+expected=$(find packages -mindepth 1 -maxdepth 1 -type d | wc -l)
+rows=0
+while read -r id state; do
+  [ -n "$id" ] || continue
+  rows=$((rows + 1))
+  case "$state" in
+    current | moderation | behind) ;;
+    *) failures+=("$id is $state") ;;
+  esac
+done < <(printf '%s\n' "$table" | awk 'NR > 2 && NF == 0 { exit } NR > 2 { print $1, $5 }')
+
+if [ "$rows" -ne "$expected" ]; then
+  failures+=("bun run check listed $rows packages; packages/ has $expected")
+fi
+
+if [ "${#failures[@]}" -gt 0 ]; then
+  printf 'FAIL: %s\n' "${failures[@]}"
+  exit 1
+fi
+echo "PASS: the latest update.yml run on master succeeded within $max_age_hours hours, and every package is current, in moderation, or behind with the next daily run due to publish it"
