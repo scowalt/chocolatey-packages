@@ -42,6 +42,7 @@ jobs:
           name: prepare-report
           path: prepare-report.json
           if-no-files-found: error
+          overwrite: true
           retention-days: 7
 
   publish:
@@ -73,7 +74,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
           PREPARE_REPORT: ${{ runner.temp }}/prepare-report/prepare-report.json
-          PREPARE_RESULT: ${{ needs.prepare.result }}
         run: bun run daily:publish
       - name: Report the successful run to the alerts router
         if: ${{ success() && needs.prepare.result == 'success' }}

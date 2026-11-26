@@ -11,15 +11,11 @@ function required(name: string): string {
   return value;
 }
 
-const problems = await publishPackages(
-  loadReport(required("PREPARE_REPORT")),
-  required("PREPARE_RESULT"),
-  {
-    http,
-    choco,
-    git: gitIn(process.cwd()),
-    out: outputDirectory(),
-    apiKey: required("CHOCOLATEY_API_KEY"),
-  },
-);
+const problems = await publishPackages(loadReport(required("PREPARE_REPORT")), {
+  http,
+  choco,
+  git: gitIn(process.cwd()),
+  out: outputDirectory(),
+  apiKey: required("CHOCOLATEY_API_KEY"),
+});
 exitWith(problems, "Published");

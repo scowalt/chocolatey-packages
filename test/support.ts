@@ -48,3 +48,25 @@ export function copyOfPackages(): string {
   cpSync(PACKAGES_DIR, directory, { recursive: true });
   return directory;
 }
+
+export interface FakeChocoOptions {
+  readonly failInstall?: readonly string[];
+  readonly failPack?: readonly string[];
+  readonly duringInstall?: (id: string) => void;
+}
+
+export function fakeChoco(options: FakeChocoOptions = {}) {
+  const installed: string[] = [];
+  return {
+    installed,
+    async pack(id: string, out: string) {
+      if (options.failPack?.includes(id)) throw new Error(`pack ${id} failed`);
+      return `${out}/${id}.nupkg`;
+    },
+    async installAndUninstall(id: string) {
+      installed.push(id);
+      options.duringInstall?.(id);
+      if (options.failInstall?.includes(id)) throw new Error(`install ${id} failed`);
+    },
+  };
+}

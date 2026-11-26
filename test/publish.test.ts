@@ -1,29 +1,32 @@
 import { describe, expect, test } from "bun:test";
+import { mkdtempSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import type { PushOutcome } from "../src/choco.ts";
 import type { Git } from "../src/git.ts";
 import { readPackage } from "../src/package-files.ts";
 import type { Actionable } from "../src/plan.ts";
-import { planPackages } from "../src/prepare.ts";
+import { installPackages, planPackages } from "../src/prepare.ts";
 import { pushGate, publishPackages, selectCommits, type PublishItem } from "../src/publish.ts";
-import type { PrepareEntry, PrepareReport } from "../src/report.ts";
-import { copyOfPackages } from "./support.ts";
+import { loadReport, type PrepareEntry } from "../src/report.ts";
+import { copyOfPackages, fakeChoco } from "./support.ts";
 import { buildWorld, type WorldOptions } from "./world.ts";
 
 const publishPlan: Actionable = { kind: "publish", version: "1.0.0", rewrite: false };
 
 function entry(overrides: Partial<PrepareEntry> = {}): PrepareEntry {
-  return { id: "demo", plan: publishPlan, hash: "h", installed: true, ...overrides };
+  return { id: "demo", hash: "h", installed: true, ...overrides };
 }
 
 describe("pushGate", () => {
-  test("pushes when the plan says publish, the install passed and the hash and plan match", () => {
+  test("pushes when the plan says publish, the install passed and the hashes match", () => {
     expect(pushGate({ plan: publishPlan, hash: "h" }, entry())).toEqual({ push: true });
   });
 
   test("does not push when the plan is not publish", () => {
     for (const kind of ["approved", "moderation"] as const) {
       const plan: Actionable = { kind, version: "1.0.0", rewrite: false };
-      expect(pushGate({ plan, hash: "h" }, entry({ plan })).push).toBe(false);
+      expect(pushGate({ plan, hash: "h" }, entry()).push).toBe(false);
     }
   });
 
@@ -43,11 +46,6 @@ describe("pushGate", () => {
       push: false,
       reason: "its files differ from the ones prepare tested",
     });
-  });
-
-  test("does not push when prepare planned something else", () => {
-    const planned: Actionable = { kind: "publish", version: "1.0.1", rewrite: true };
-    expect(pushGate({ plan: publishPlan, hash: "h" }, entry({ plan: planned })).push).toBe(false);
   });
 });
 
@@ -115,51 +113,82 @@ interface Recorded {
   readonly messages: string[];
 }
 
-async function runPublish(
+interface PublishOptions {
+  readonly pushOutcomes?: Record<string, PushOutcome>;
+  readonly git?: Git;
+}
+
+async function prepareThroughDisk(world: WorldOptions, failInstall: readonly string[] = []): Promise<PrepareEntry[]> {
+  const dir = copyOfPackages();
+  await planPackages(buildWorld(world).http, dir);
+  const path = join(mkdtempSync(join(tmpdir(), "handoff-")), "prepare-report.json");
+  await installPackages("out", fakeChoco({ failInstall }), path, dir);
+  return loadReport(path);
+}
+
+async function publishFrom(
+  entries: readonly PrepareEntry[],
   world: WorldOptions,
-  options: {
-    readonly tamper?: (report: PrepareReport) => PrepareReport;
-    readonly pushOutcomes?: Record<string, PushOutcome>;
-    readonly prepareResult?: string;
-    readonly dir?: string;
-    readonly git?: Git;
-  } = {},
+  options: PublishOptions = {},
 ): Promise<{ problems: string[]; recorded: Recorded; dir: string }> {
-  const prepared = await planPackages(buildWorld(world).http, copyOfPackages());
-  const reported: PrepareReport = {
-    ...prepared,
-    packages: prepared.packages.map((planned) => ({ ...planned, installed: true })),
-  };
-  const dir = options.dir ?? copyOfPackages();
+  const dir = copyOfPackages();
   const recorded: Recorded = { pushed: [], committed: [], messages: [] };
-  const problems = await publishPackages(
-    options.tamper ? options.tamper(reported) : reported,
-    options.prepareResult ?? "success",
-    {
-      http: buildWorld(world).http,
-      choco: {
-        async pack(id, out) {
-          return `${out}/${id}.nupkg`;
-        },
-        async push(nupkg) {
-          const id = /([^/]+)\.nupkg$/.exec(nupkg)?.[1] ?? "";
-          recorded.pushed.push(id);
-          return options.pushOutcomes?.[id] ?? "pushed";
-        },
+  const problems = await publishPackages(entries, {
+    http: buildWorld(world).http,
+    choco: {
+      async pack(id, out) {
+        return `${out}/${id}.nupkg`;
       },
-      git: options.git ?? {
-        async commitAndPush(ids, message) {
-          recorded.committed.push([...ids]);
-          recorded.messages.push(message);
-        },
+      async push(nupkg) {
+        const id = /([^/]+)\.nupkg$/.exec(nupkg)?.[1] ?? "";
+        recorded.pushed.push(id);
+        return options.pushOutcomes?.[id] ?? "pushed";
       },
-      out: "out",
-      apiKey: "key",
-      dir,
     },
-  );
+    git: options.git ?? {
+      async commitAndPush(ids, message) {
+        recorded.committed.push([...ids]);
+        recorded.messages.push(message);
+      },
+    },
+    out: "out",
+    apiKey: "key",
+    dir,
+  });
   return { problems, recorded, dir };
 }
+
+async function runPublish(
+  world: WorldOptions,
+  options: PublishOptions & {
+    readonly tamper?: (entries: PrepareEntry[]) => PrepareEntry[];
+    readonly failInstall?: readonly string[];
+  } = {},
+) {
+  const entries = await prepareThroughDisk(world, options.failInstall);
+  return publishFrom(options.tamper ? options.tamper(entries) : entries, world, options);
+}
+
+describe("the handoff from prepare to publish", () => {
+  test("prepare rewrites and tests, writes the report file, and publish pushes what that file vouches for", async () => {
+    const prepareDir = copyOfPackages();
+    const path = join(mkdtempSync(join(tmpdir(), "handoff-")), "prepare-report.json");
+
+    expect(await planPackages(buildWorld(LIVE).http, prepareDir)).toEqual([]);
+    expect(readPackage("cryptomator", prepareDir).nuspec).toContain("<version>1.19.7</version>");
+
+    expect(await installPackages("out", fakeChoco(), path, prepareDir)).toEqual([]);
+    const written: Record<string, unknown>[] = JSON.parse(readFileSync(path, "utf8"));
+    expect(written).toHaveLength(7);
+    for (const item of written) expect(Object.keys(item).sort()).toEqual(["hash", "id", "installed"]);
+
+    const { problems, recorded, dir } = await publishFrom(loadReport(path), LIVE);
+    expect(problems).toEqual([]);
+    expect(recorded.pushed.sort()).toEqual([...PUBLISHABLE].sort());
+    expect(recorded.committed).toEqual([["cryptomator"]]);
+    expect(readPackage("cryptomator", dir).nuspec).toContain("<version>1.19.7</version>");
+  });
+});
 
 describe("publishPackages", () => {
   test("pushes every package whose version is absent and commits only the rewritten one", async () => {
@@ -195,12 +224,8 @@ describe("publishPackages", () => {
 
   test("does not push a package whose files differ from the ones prepare tested", async () => {
     const { problems, recorded } = await runPublish(LIVE, {
-      tamper: (report) => ({
-        ...report,
-        packages: report.packages.map((planned) =>
-          planned.id === "project64" ? { ...planned, hash: "0".repeat(64) } : planned,
-        ),
-      }),
+      tamper: (entries) =>
+        entries.map((reported) => (reported.id === "project64" ? { ...reported, hash: "0".repeat(64) } : reported)),
     });
     expect(recorded.pushed.sort()).toEqual(PUBLISHABLE.filter((id) => id !== "project64").sort());
     expect(problems).toEqual(["project64: not pushed: its files differ from the ones prepare tested"]);
@@ -208,22 +233,12 @@ describe("publishPackages", () => {
   });
 
   test("does not push a package whose install test failed, and does not hold back the others", async () => {
-    const { problems, recorded, dir } = await runPublish(LIVE, {
-      tamper: (report) => ({
-        ...report,
-        failures: ["cryptomator: choco install cryptomator exited with 1"],
-        packages: report.packages.map((planned) =>
-          planned.id === "cryptomator" ? { ...planned, installed: false } : planned,
-        ),
-      }),
-      prepareResult: "failure",
-    });
+    const { problems, recorded, dir } = await runPublish(LIVE, { failInstall: ["cryptomator"] });
     expect(recorded.pushed).not.toContain("cryptomator");
     expect(recorded.pushed.sort()).toEqual(PUBLISHABLE.filter((id) => id !== "cryptomator").sort());
     expect(recorded.committed).toEqual([]);
     expect(readPackage("cryptomator", dir).nuspec).toContain("<version>1.19.2</version>");
-    expect(problems).toContain("cryptomator: not pushed: its install test did not pass");
-    expect(problems).toContain("prepare job ended failure");
+    expect(problems).toEqual(["cryptomator: not pushed: its install test did not pass"]);
   });
 
   test("a failed push restores that package's files, is reported, and does not block the others", async () => {
@@ -269,11 +284,19 @@ describe("publishPackages", () => {
   });
 
   test("an unreadable prepare report pushes nothing", async () => {
-    const { problems, recorded } = await runPublish(LIVE, {
-      tamper: () => ({ packages: [], failures: ["prepare report unreadable: nope"] }),
-      prepareResult: "failure",
-    });
+    const { problems, recorded } = await runPublish(LIVE, { tamper: () => [] });
     expect(recorded.pushed).toEqual([]);
-    expect(problems).toContain("prepare report unreadable: nope");
+    expect(problems).toEqual(PUBLISHABLE.map((id) => `${id}: not pushed: prepare reported nothing for this package`));
+  });
+
+  test("a failure on a lookup the decision does not use cannot hold back a push", async () => {
+    const { problems, recorded } = await runPublish({
+      ...LIVE,
+      feedFailures: ["cryptomator@1.19.2"],
+      listingFails: true,
+    });
+    expect(problems).toEqual([]);
+    expect(recorded.pushed.sort()).toEqual([...PUBLISHABLE].sort());
+    expect(recorded.committed).toEqual([["cryptomator"]]);
   });
 });

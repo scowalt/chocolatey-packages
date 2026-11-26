@@ -8,8 +8,8 @@
   "scripts": {
     "check": "bun src/bin/check.ts",
     "verify": "bun src/bin/verify.ts",
-    "daily:plan": "bun src/bin/prepare.ts plan",
-    "daily:install": "bun src/bin/prepare.ts install",
+    "daily:plan": "bun src/bin/plan.ts",
+    "daily:install": "bun src/bin/install.ts",
     "daily:publish": "bun src/bin/publish.ts",
     "test": "bun test",
     "typecheck": "tsc --noEmit",

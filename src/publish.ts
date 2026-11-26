@@ -3,9 +3,9 @@ import { derivePackage, type Derived } from "./derive.ts";
 import type { Git } from "./git.ts";
 import type { Http } from "./http.ts";
 import { PACKAGES_DIR, writePackage } from "./package-files.ts";
-import { samePlan, type Actionable } from "./plan.ts";
+import type { Actionable } from "./plan.ts";
 import { definitionOf, packages } from "./registry.ts";
-import type { PrepareEntry, PrepareReport } from "./report.ts";
+import type { PrepareEntry } from "./report.ts";
 import { errorMessage, failures, forEachPackage, values, type Outcome } from "./runner.ts";
 
 export type PushGate = { readonly push: true } | { readonly push: false; readonly reason: string };
@@ -19,9 +19,6 @@ export function pushGate(
   if (!reported.installed) return { push: false, reason: "its install test did not pass" };
   if (reported.hash !== derived.hash) {
     return { push: false, reason: "its files differ from the ones prepare tested" };
-  }
-  if (!samePlan(reported.plan, derived.plan)) {
-    return { push: false, reason: "prepare planned something else" };
   }
   return { push: true };
 }
@@ -64,8 +61,7 @@ function pushResultOf(attempts: readonly Outcome<PushOutcome>[], id: string): Pu
 }
 
 export async function publishPackages(
-  prepared: PrepareReport,
-  prepareResult: string,
+  prepared: readonly PrepareEntry[],
   deps: PublishDeps,
 ): Promise<string[]> {
   const dir = deps.dir ?? PACKAGES_DIR;
@@ -75,7 +71,7 @@ export async function publishPackages(
     (id) => derivePackage(definitionOf(id), deps.http, dir),
   );
   const derived = values(derivations);
-  const reported = new Map(prepared.packages.map((entry) => [entry.id, entry]));
+  const reported = new Map(prepared.map((entry) => [entry.id, entry]));
   const gates = derived.map((item) => ({ item, gate: pushGate(item, reported.get(item.id)) }));
 
   const refused = gates.flatMap(({ item, gate }) =>
@@ -100,13 +96,7 @@ export async function publishPackages(
   restoreUncommitted(derived, committed, dir);
   const commitProblems = await commitSelected(committed, deps.git);
 
-  const prepareProblems = [
-    ...(prepareResult === "success" ? [] : [`prepare job ended ${prepareResult}`]),
-    ...prepared.failures,
-  ];
-  return [
-    ...new Set([...failures(derivations), ...refused, ...failures(attempts), ...commitProblems, ...prepareProblems]),
-  ];
+  return [...failures(derivations), ...refused, ...failures(attempts), ...commitProblems];
 }
 
 async function commitSelected(committed: readonly string[], git: Git): Promise<string[]> {
