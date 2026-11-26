@@ -69,7 +69,7 @@ export function problemOf(decision: Plan): string | undefined {
     case "ahead":
       return `the nuspec's ${decision.version} is newer than upstream's ${decision.upstream}; nothing is rewritten downward`;
     case "rejected":
-      return `${decision.version} was rejected by Chocolatey moderation; publish a fix version`;
+      return `${decision.version} was rejected by Chocolatey moderation; write a fix version by hand: its nuspec version, URL and checksum`;
     default:
       return undefined;
   }

@@ -52,7 +52,7 @@ describe("planPackages", () => {
       }).http,
       dir,
     );
-    expect(problems).toEqual(["stepmania: 5.0.12 was rejected by Chocolatey moderation; publish a fix version"]);
+    expect(problems).toEqual(["stepmania: 5.0.12 was rejected by Chocolatey moderation; write a fix version by hand: its nuspec version, URL and checksum"]);
     expect(readPackage("cryptomator", dir).nuspec).toContain("<version>1.19.7</version>");
   });
 });

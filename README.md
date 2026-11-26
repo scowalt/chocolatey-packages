@@ -84,7 +84,8 @@ treats the artifact as untrusted.
    report.
 2. `bun run daily:install` hashes every package's files, then packs, installs and uninstalls every
    package, changed or not, so a dead download shows up the day it dies, then writes
-   `prepare-report.json`. The hashes come first, so no installer can change what they cover.
+   `prepare-report.json`. The hashes come first, so no installer can change the files before they are
+   hashed. The report file is written after the installers run, so `publish` treats it as untrusted.
 3. The job uploads the report. It uploads even when some installs failed, and the job fails if the
    plan or any install failed. The upload overwrites, so re-running a failed `prepare` works.
 

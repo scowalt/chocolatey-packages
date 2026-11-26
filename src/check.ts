@@ -17,7 +17,7 @@ export const LEGEND = [
   "unpublished  the nuspec is at upstream's version and Chocolatey has no such version; the next daily run pushes it",
   "behind       upstream is newer than the nuspec; the next daily run rewrites the package",
   "ahead        the nuspec is newer than upstream; the updater never rewrites downward",
-  "rejected     Chocolatey rejected the nuspec's version; publish a fix version",
+  "rejected     Chocolatey rejected the version the updater would publish; write a fix version by hand",
   "error        upstream or the Chocolatey feed could not be read",
 ].join("\n");
 
