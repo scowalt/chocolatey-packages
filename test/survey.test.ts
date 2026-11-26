@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { definitionOf } from "../src/registry.ts";
 import { surveyPackage } from "../src/survey.ts";
+import { PACKAGES_FIXTURE } from "./support.ts";
 import { buildWorld, feedUrl } from "./world.ts";
 
 function feedRequests(requests: readonly { readonly url: string }[]): string[] {
@@ -13,7 +14,7 @@ describe("surveyPackage", () => {
       upstream: { cryptomator: "1.19.7" },
       feed: { "cryptomator@1.19.7": "absent" },
     });
-    const result = await surveyPackage(definitionOf("cryptomator"), http);
+    const result = await surveyPackage(definitionOf("cryptomator"), http, PACKAGES_FIXTURE);
     expect(result.nuspec).toEqual({ upstream: "1.19.2" });
     expect(result.upstream.version).toBe("1.19.7");
     expect(result.plan).toEqual({ kind: "publish", version: "1.19.7", rewrite: true });
@@ -21,20 +22,20 @@ describe("surveyPackage", () => {
 
   test("a fix version in the nuspec is looked up as it is written", async () => {
     const { http } = buildWorld({ feed: { "project64@3.0.1.20261126": "absent" } });
-    const result = await surveyPackage(definitionOf("project64"), http);
+    const result = await surveyPackage(definitionOf("project64"), http, PACKAGES_FIXTURE);
     expect(result.nuspec).toEqual({ upstream: "3.0.1", fixDate: "20261126" });
     expect(result.plan).toEqual({ kind: "publish", version: "3.0.1.20261126", rewrite: false });
   });
 
   test("makes one feed request, for the target version only", async () => {
     const { http } = buildWorld({ upstream: { cryptomator: "1.19.7" } });
-    await surveyPackage(definitionOf("cryptomator"), http);
+    await surveyPackage(definitionOf("cryptomator"), http, PACKAGES_FIXTURE);
     expect(feedRequests(http.requests)).toEqual([feedUrl("cryptomator", "1.19.7")]);
   });
 
   test("makes no feed request when the nuspec is ahead of upstream", async () => {
     const { http } = buildWorld({ upstream: { cryptomator: "1.19.1" } });
-    const result = await surveyPackage(definitionOf("cryptomator"), http);
+    const result = await surveyPackage(definitionOf("cryptomator"), http, PACKAGES_FIXTURE);
     expect(result.plan).toEqual({ kind: "ahead", version: "1.19.2", upstream: "1.19.1", rewrite: false });
     expect(feedRequests(http.requests)).toEqual([]);
   });
@@ -46,12 +47,12 @@ describe("surveyPackage", () => {
       feedFailures: ["cryptomator@1.19.2"],
       listingFails: true,
     });
-    const result = await surveyPackage(definitionOf("cryptomator"), http);
+    const result = await surveyPackage(definitionOf("cryptomator"), http, PACKAGES_FIXTURE);
     expect(result.plan).toEqual({ kind: "publish", version: "1.19.7", rewrite: true });
   });
 
   test("a failing lookup of the target version fails the survey rather than reading as absent", async () => {
     const { http } = buildWorld({ feedFailures: ["stepmania@5.0.12"] });
-    await expect(surveyPackage(definitionOf("stepmania"), http)).rejects.toThrow("503");
+    await expect(surveyPackage(definitionOf("stepmania"), http, PACKAGES_FIXTURE)).rejects.toThrow("503");
   });
 });
