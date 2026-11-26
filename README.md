@@ -74,6 +74,8 @@ credentials and gives `GITHUB_TOKEN` only to the step that asks GitHub for relea
 
 `publish` runs after `prepare`, also when `prepare` failed. It runs in the environment `chocolatey`
 with `contents: write`, runs no package script and no installer, and treats the report as untrusted.
+Its Bun setup skips the Actions cache, because jobs that ran installers on `master` can write that
+cache.
 
 1. `bun run daily:publish` re-derives every plan and rewrites the files itself: a download and a hash.
 2. It packs and pushes a package only when the report says its install test passed, its own file hash
